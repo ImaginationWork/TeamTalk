@@ -176,6 +176,11 @@ public class UserInfoFragment extends MainFragment {
 		logger.d("detail#initDetailProfile");
 		hideProgressBar();
         DepartmentEntity deptEntity = imService.getContactManager().findDepartment(currentUser.getDepartmentId());
+        if (deptEntity==null){
+            logger.e("deptEntity is empty!");
+            return;
+        }
+
 		setTextViewContent(R.id.department,deptEntity.getDepartName());
 		setTextViewContent(R.id.telno, currentUser.getPhone());
 		setTextViewContent(R.id.email, currentUser.getEmail());
