@@ -33,8 +33,6 @@ public class WebviewFragment extends MainFragment {
     }
 	
     private void initRes() {
-        // 设置顶部标题栏
-        setTopTitleBold(getActivity().getString(R.string.main_innernet));
 		setTopLeftButton(R.drawable.tt_top_back);
 		topLeftContainerLayout.setOnClickListener(new View.OnClickListener() {
 
