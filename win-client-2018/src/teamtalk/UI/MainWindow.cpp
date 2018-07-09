@@ -715,12 +715,11 @@ void MainWindow::OnClick(TNotifyUI& msg)
         //show the detail of myself.
         module::getSysConfigModule()->asynNotifyObserver(module::KEY_SYSCONFIG_SHOW_USERDETAILDIALOG, module::getSysConfigModule()->userID());
     }
-    else if (msg.pSender == m_pbtnClose
-        || msg.pSender == m_pbtnMinMize)
-    {
+    else if (msg.pSender == m_pbtnClose) {
         ShowWindow(false);
         return;
     }
+
     __super::OnClick(msg);
 }
 
