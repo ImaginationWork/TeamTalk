@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Window caption="0,0,0,65" roundcorner="4,4" size="900,700" sizebox="0,4,0,4" mininfo="800,600" >
+<Window caption="0,0,0,65" roundcorner="4,4,4,4" size="900,700" sizebox="4,4,4,4" mininfo="800,600" >
   <Font name="微软雅黑" size="12" bold="false" default="true" />
   <Font name="微软雅黑" size="14" bold="true"/>
   <Default name="VScrollBar" value="button1normalimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,0,8,7&apos;&quot; button1hotimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,0,8,7&apos;&quot; button1pushedimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,0,8,7&apos;&quot; button2normalimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,17,8,24&apos;&quot; button2hotimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,17,8,24&apos;&quot; button2pushedimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,17,8,24&apos;&quot; thumbnormalimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,24,8,72&apos; corner=&apos;2,2,2,2&apos;&quot; thumbhotimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,24,8,72&apos; corner=&apos;2,2,2,2&apos;&quot; thumbpushedimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,24,8,72&apos; corner=&apos;2,2,2,2&apos;&quot; bknormalimage=&quot;file=&apos;MainWindow/scrollbar.png&apos; source=&apos;0,6,8,17&apos;&quot;" />
@@ -10,8 +10,9 @@
         <Label name="apptitle" font="1" textcolor="#FFFFFFFF" />
       </HorizontalLayout>
       <HorizontalLayout  padding="0,8,8,0"  height="16" width="68">
-        <Button name="sysconfig" tooltip="设置"  height="16" width="16" normalimage="MainWindow/setting.png" hotimage="MainWindow/setting_h.png" pushedimage="MainWindow/setting_h.png"/>
-        <Button name="minbtn" tooltip="最小化" padding="10,0,0,0" height="16" width="16" normalimage="MainWindow/minimize.png" hotimage="MainWindow/minimize_h.png" pushedimage="MainWindow/minimize_h.png"/>
+        <Button name="minbtn" tooltip="最小化" height="16" width="16" normalimage="MainWindow/minimize.png" hotimage="MainWindow/minimize_h.png" pushedimage="MainWindow/minimize_h.png"/>
+        <Button name="maxbtn" tooltip="最大化" padding="10,0,0,0" height="16" width="16" normalimage="MainWindow/max.png" hotimage="MainWindow/max_h.png" pushedimage="MainWindow/max_h.png"/>
+        <Button name="restorebtn" tooltip="恢复" visible="false" padding="10,0,0,0" height="16" width="16" normalimage="MainWindow/restore.png" hotimage="MainWindow/restore_h.png" pushedimage="MainWindow/restore_h.png"/>
         <Button name="closebtn" tooltip="关闭" padding="10,0,0,0" height="16" width="16" normalimage="MainWindow/close.png" hotimage="MainWindow/close_h.png" pushedimage="MainWindow/close_h.png"/>
       </HorizontalLayout>
     </HorizontalLayout>
@@ -28,7 +29,7 @@
       </VerticalLayout>
 
 
-      <VerticalLayout  bkcolor="#FFF7F7F7"  width="260" padding="0,30,0,0" >
+      <VerticalLayout  bkcolor="#FFF7F7F7"  width="260" padding="0,20,0,0" >
         <Control height="1" bkcolor="#FFD1DCE1"/>
         <SearchLayout name="SearchLayout" height="37" >
           <HorizontalLayout height="27" bkcolor="#FFFFFFFF">
@@ -59,7 +60,7 @@
         </VerticalLayout>
       </VerticalLayout>
 
-      <SessionContainer>
+      <SessionContainer padding="0,20,0,0" >
       </SessionContainer>
     </HorizontalLayout>
   </VerticalLayout>

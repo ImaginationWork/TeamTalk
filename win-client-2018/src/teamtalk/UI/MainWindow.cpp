@@ -62,12 +62,10 @@ namespace{
 //  MainWindow: Public, Constructor
 
 MainWindow::MainWindow()
-:m_pbtnSysConfig(nullptr)
-, m_pbtnMyFace(nullptr)
+: m_pbtnMyFace(nullptr)
 , m_bInstalled(false)
 , m_bHidden(false)
 , m_pbtnClose(nullptr)
-, m_pbtnMinMize(nullptr)
 {
 }
 
@@ -196,11 +194,8 @@ void MainWindow::OnWindowInitialized(TNotifyUI& msg)
     module::getUserListModule()->addObserver(this, BIND_CALLBACK_2(MainWindow::MKOForUserListModuleCallBack));
     module::getSessionModule()->addObserver(this, BIND_CALLBACK_2(MainWindow::MKOForSessionModuleCallBack));
 
-    m_pbtnSysConfig = (CButtonUI*)m_PaintManager.FindControl(_T("sysconfig"));
     m_pbtnMyFace = (CButtonUI*)m_PaintManager.FindControl(_T("myfacebtn"));
     m_pbtnClose = (CButtonUI*)m_PaintManager.FindControl(_T("closebtn"));
-    m_pbtnMinMize = (CButtonUI*)m_PaintManager.FindControl(_T("minbtn"));
-
     m_pTextUnreadMsgCount = static_cast<CTextUI*>(m_PaintManager.FindControl(_T("msgCount")));
     PTR_VOID(m_pTextUnreadMsgCount);
 
@@ -705,12 +700,7 @@ DWORD MainWindow::GetShellVersion(void)
 void MainWindow::OnClick(TNotifyUI& msg)
 {
     PTR_VOID(msg.pSender);
-    if (msg.pSender == m_pbtnSysConfig)
-    {
-        //ÏµÍ³ÉèÖÃ
-        module::getSysConfigModule()->showSysConfigDialog(m_hWnd);
-    }
-    else if (msg.pSender == m_pbtnMyFace)
+    if (msg.pSender == m_pbtnMyFace)
     {
         //show the detail of myself.
         module::getSysConfigModule()->asynNotifyObserver(module::KEY_SYSCONFIG_SHOW_USERDETAILDIALOG, module::getSysConfigModule()->userID());
