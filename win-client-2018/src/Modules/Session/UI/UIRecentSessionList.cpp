@@ -296,9 +296,16 @@ void CUIRecentSessionList::sort()
 BOOL CUIRecentSessionList::UpdateItemConentBySId(IN const std::string& sId)
 {
 	Node* pNode = GetItemBySId(sId);
-	PTR_FALSE(pNode);
+    if (pNode == nullptr) {
+        return false;
+    }
+	//PTR_FALSE(pNode);
 	CControlUI* pListElement = pNode->data().list_elment_;
-	PTR_FALSE(pListElement);
+	//PTR_FALSE(pListElement);
+    if (pNode == nullptr) {
+        return false;
+    }
+
 
 	CLabelUI* plastMsgTimeUI = static_cast<CLabelUI*>(paint_manager_.FindSubControlByName(pListElement, lastContentTimeControlName));
 	if (!plastMsgTimeUI)

@@ -400,8 +400,22 @@ void MainListLayout::Notify(TNotifyUI& msg)
 					if (m_GroupList->CanExpand(node))
 					{
 						m_GroupList->SetChildVisible(node, !node->data().child_visible_);
-					}
+                    }
 				}
+
+
+                if (m_Tab->GetCurSel() == 0)
+                {
+                    _CreatSessionDialog(m_EAuserTreelist, msg.pSender);
+                }
+                else if (1 == m_Tab->GetCurSel())
+                {
+                    _CreatSessionDialog(m_GroupList, msg.pSender);
+                }
+                else if (m_Tab->GetCurSel() == 2)
+                {
+                    _CreatSessionDialog(m_UIRecentConnectedList, msg.pSender);
+                }
 
 			}
 		}
@@ -432,21 +446,6 @@ void MainListLayout::Notify(TNotifyUI& msg)
 		if (m_UIRecentConnectedList)
 		{
 			m_UIRecentConnectedList->sort();
-		}
-	}
-	else if (0 == _tcsicmp(msg.sType, DUI_MSGTYPE_ITEMACTIVATE))
-	{
-		if (m_Tab->GetCurSel() == 0)
-		{
-			_CreatSessionDialog(m_EAuserTreelist, msg.pSender);
-		}
-		else if (1 == m_Tab->GetCurSel())
-		{
-			_CreatSessionDialog(m_GroupList, msg.pSender);
-		}
-		else if (m_Tab->GetCurSel() == 2)
-		{
-			_CreatSessionDialog(m_UIRecentConnectedList, msg.pSender);
 		}
 	}
 	else if (0 == _tcsicmp(msg.sType, DUI_MSGTYPE_CLICK))
