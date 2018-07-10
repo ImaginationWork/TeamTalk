@@ -72,8 +72,20 @@ build_protobuf(){
     mkdir -p ../base/pb/lib/linux/
     cp lib/libprotobuf-lite.a ../base/pb/lib/linux/
     cp  -r include/* ../base/pb/
+    cd ..
 }
+
+gen_files_cpp(){
+    cd ./protobuf/bin/
+    echo $(pwd)
+    SRC_DIR=../../../../pb
+    DST_DIR=../../base/pb/protocol
+    mkdir -p $DST_DIR
+    ./protoc -I=$SRC_DIR --cpp_out=$DST_DIR $SRC_DIR/*.proto
+}
+
 
 check_user
 get_cur_dir
 build_protobuf
+gen_files_cpp
