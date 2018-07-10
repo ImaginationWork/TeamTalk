@@ -350,9 +350,14 @@ void MainWindow::InitWindow()
 
 LRESULT MainWindow::HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    if (uMsg == WM_START_MOGUTALKINSTANCE)
-    {
+    if (uMsg == WM_START_MOGUTALKINSTANCE) {
         BringToTop();
+    }
+    else if (uMsg == WM_KEYDOWN)
+    {
+        if (VK_ESCAPE == wParam) {
+            ShowWindow(false);
+        }
     }
     return 0;
 }
