@@ -226,7 +226,6 @@ public class MessageActivity extends TTBaseActivity
         initAudioSensor();
         initView();
         imServiceConnector.connect(this);
-        EventBus.getDefault().register(this, SysConstant.MESSAGE_EVENTBUS_PRIORITY);
         logger.d("message_activity#register im service and eventBus");
     }
 
@@ -286,6 +285,9 @@ public class MessageActivity extends TTBaseActivity
     protected void onResume() {
         logger.d("message_activity#onresume:%s", this);
         super.onResume();
+
+        EventBus.getDefault().register(this, SysConstant.MESSAGE_EVENTBUS_PRIORITY);
+
         IMApplication.gifRunning = true;
         historyTimes = 0;
         // not the first time
@@ -300,7 +302,6 @@ public class MessageActivity extends TTBaseActivity
         logger.d("message_activity#onDestroy:%s", this);
         historyTimes = 0;
         imServiceConnector.disconnect(this);
-        EventBus.getDefault().unregister(this);
         adapter.clearItem();
         albumList.clear();
         sensorManager.unregisterListener(this, sensor);
@@ -1111,6 +1112,8 @@ public class MessageActivity extends TTBaseActivity
     @Override
     protected void onPause() {
         logger.d("message_activity#onPause:%s", this);
+
+        EventBus.getDefault().unregister(this);
         super.onPause();
     }
 
