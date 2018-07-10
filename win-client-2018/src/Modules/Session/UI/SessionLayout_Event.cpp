@@ -463,6 +463,7 @@ void SessionLayout::MKOForEmotionModuleCallBack(const std::string& keyId, MKO_TU
 			{
 				SIZE size = { 0, 0 };			
 				m_pInputRichEdit->InsertImage(strPath.GetBuffer(),size,TRUE);
+                m_pInputRichEdit->SetFocus();
 			}
 		}
 	}
