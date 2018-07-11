@@ -1,0 +1,1 @@
+protoc.exe -I..\..\..\pb\ --cpp_out=. ..\..\..\pb\*.proto
