@@ -45,6 +45,11 @@ void MiscModule_Impl::release()
 	delete this;
 }
 
+CString MiscModule_Impl::getImageFileSavedPath()
+{
+    return getTTCommonAppdataUserDir() + _T("Image\\");
+}
+
 CString MiscModule_Impl::getUsersDir()
 {
 	return util::getParentAppPath() + _T("users\\");
@@ -256,6 +261,26 @@ void MiscModule_Impl::doProcess1(IN std::string& pData, OUT std::string& pOutDat
 	}
 }
 
+void MiscModule_Impl::doProcess1(IN std::vector<char> &pData, OUT std::vector<char> &pOutData)
+{
+	if (pData.empty())
+		return;
+
+	char* pOutDataTemp = 0;
+	uint32_t nOutLen = 0;
+	int retCode = EncryptMsg(pData.data(), pData.size(), &pOutDataTemp, nOutLen);
+	if (retCode == 0 && nOutLen > 0 && pOutDataTemp != 0) {
+        pOutData.resize(nOutLen);
+        memcpy(pOutData.data(), pOutDataTemp, nOutLen);
+		Free(pOutDataTemp);
+	}
+	else {
+		LOG__(ERR, _T("EncryptMsg Failed!,msg content:%x"), pData.data());
+		//if failed, copy the source msg data
+		pOutData = pData;
+	}
+}
+
 void MiscModule_Impl::doProcess2(IN std::string& pData, OUT std::string& pOutData)
 {
 	LOG__(DEBG, _T("DecryptMsg,pData content:%s")
@@ -278,6 +303,26 @@ void MiscModule_Impl::doProcess2(IN std::string& pData, OUT std::string& pOutDat
 		//if failed, copy the source msg data
 		pOutData = pData;
 	}
+}
+
+void MiscModule_Impl::doProcess2(IN std::vector<char>& pData, OUT std::vector<char>& pOutData) {
+    LOG__(DEBG, _T("DecryptMsg,pData content:%x"), pData.data());
+    if (pData.empty())
+        return;
+
+    char* pOutDataTemp = 0;
+    uint32_t nOutLen = 0;
+    int retCode = DecryptMsg(pData.data(), pData.size(), &pOutDataTemp, nOutLen);
+    if (retCode == 0 && nOutLen > 0 && pOutDataTemp != 0) {
+        pOutData.resize(nOutLen);
+        memcpy(pOutData.data(), pOutDataTemp, nOutLen);
+        Free(pOutDataTemp);
+    }
+    else {
+        LOG__(ERR, _T("DecryptMsg Failed!,pData content:%x") , pData.data());
+        //if failed, copy the source msg data
+        pOutData = pData;
+    }
 }
 
 /******************************************************************************/

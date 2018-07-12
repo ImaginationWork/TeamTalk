@@ -442,7 +442,7 @@ void SessionLayout::_SendImage(CString& csFilePath)
 
 	//本地消息展现
 	MessageEntity msg;
-	msg.msgType = MSG_TYPE_TEXT_P2P;
+	msg.msgType = IM::BaseDefine::MSG_TYPE_SINGLE_TEXT;
 	msg.talkerSid = module::getSysConfigModule()->userID();
 	msg.sessionId = m_sId;
 	msg.msgRenderType = MESSAGE_RENDERTYPE_TEXT;

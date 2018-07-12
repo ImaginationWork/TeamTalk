@@ -178,7 +178,37 @@ BOOL SessionModule_Impl::_prase2LocalMsg(OUT MessageEntity& msg)
 		//ENCRYPT_MSG(fileName, msgEncrypt);
 		//msg.content = msgEncrypt;
 		msg.content = fileName;
-	}
+    }
+    else if (IM::BaseDefine::MsgType::MSG_TYPE_SINGLE_IMAGE == msg.msgType)//个人消息
+    {
+        //实时个人消息需要多端同步
+        if (MESSAGE_TYPE_RUNTIME == msg.msgStatusType
+            && msg.talkerSid != module::getSysConfigModule()->userID())
+            msg.sessionId = msg.talkerSid;
+
+        msg.msgSessionType = MESSAGETYPE_FROM_FRIEND;
+        //msg.msgRenderType = MESSAGE_RENDERTYPE_IMAGE;
+        msg.msgRenderType = MESSAGE_RENDERTYPE_TEXT;
+        std::string fileName;
+        CString fullpath;
+
+        std::vector<char> decodedContent;
+        {
+            std::vector<char> tmpEncodedContent(msg.content.size(), 0);
+            memcpy(tmpEncodedContent.data(), msg.content.c_str(), tmpEncodedContent.size());
+            DECRYPT_MSG(tmpEncodedContent, decodedContent);//发送消息队列里的全是加密过的
+        }
+
+        std::string image_ext = decodedContent.data();
+        ImageMessageMananger::getInstance()->makeAppImageSid(msg.msgId, msg.sessionId, image_ext, fileName);
+        ImageMessageMananger::getInstance()->saveImageDataToFile((UCHAR*)(decodedContent.data()+msg.extraDataSize), decodedContent.size()- msg.extraDataSize, fileName, fullpath);
+        msg.content = fileName;
+
+        fullpath = MixedMsg::AddPicTeg2Pic(fullpath);
+        msg.msgType = IM::BaseDefine::MSG_TYPE_SINGLE_TEXT;
+        msg.content = util::cStringToString(fullpath);
+
+    }
 	else if (IM::BaseDefine::MsgType::MSG_TYPE_SINGLE_TEXT == msg.msgType)//个人消息
 	{
 		//实时个人消息需要多端同步
@@ -195,7 +225,13 @@ BOOL SessionModule_Impl::_prase2LocalMsg(OUT MessageEntity& msg)
 		msg.msgSessionType = MESSAGETYPE_FROM_GROUP;
 		msg.makeGroupSessionId();
 	}
-	else if (MSG_TYPE_AUDIO_GROUP == msg.msgType)
+    else if (IM::BaseDefine::MsgType::MSG_TYPE_GROUP_IMAGE == msg.msgType)//群消息
+    {
+        msg.msgRenderType = MESSAGE_RENDERTYPE_IMAGE;
+        msg.msgSessionType = MESSAGETYPE_FROM_GROUP;
+        msg.makeGroupSessionId();
+    }
+	else if (IM::BaseDefine::MSG_TYPE_GROUP_AUDIO == msg.msgType)
 	{
 		msg.msgSessionType = MESSAGETYPE_FROM_GROUP;
 		msg.msgRenderType = MESSAGE_RENDERTYPE_AUDIO;
@@ -232,8 +268,9 @@ void SessionModule_Impl::_sessionMsgData(IN std::string& pbBody)
 	msg.sessionId = util::uint32ToString(imMsgData.to_session_id());
 	msg.msgStatusType = MESSAGE_TYPE_RUNTIME;
 	msg.msgType = imMsgData.msg_type();
-	msg.msgId = imMsgData.msg_id();
-	msg.content = imMsgData.msg_data();
+    msg.msgId = imMsgData.msg_id();
+    msg.content = imMsgData.msg_data();
+
 
 	_prase2LocalMsg(msg);//解析成本地的消息
 

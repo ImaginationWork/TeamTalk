@@ -12,14 +12,6 @@
 
 /******************************************************************************/
 
-///////////////////////////消息类型跟服务器一致///////////////////////////////////////////////
-enum MSG_TYPE_SERVER{
-	MSG_TYPE_TEXT_P2P = 0x01,
-	MSG_TYPE_AUDIO_P2P = 0x02,
-	MSG_TYPE_TEXT_GROUP = 0x11,
-	MSG_TYPE_AUDIO_GROUP = 0x12,
-};
-
 enum MSG_TYPE_RENDER//消息渲染类型--这个是给IE显示用的
 {
 	MESSAGE_RENDERTYPE_TEXT = 1,            //纯文本消息
@@ -56,8 +48,9 @@ public:
 	UInt8			msgRenderType;      //消息渲染类型								MSG_TYPE_RENDER
 	UInt8			msgSessionType;		//消息来源		 1.个人消息；2.群消息
 	UInt32          msgTime;            //消息收发时间
-	std::string     content;            //消息内容
-	std::string     imageId;            //图片ID
+	std::string     content = "";            //消息内容
+	std::vector<char>  content_image;            //图片内容
+    size_t extraDataSize = 10;
 	std::string     talkerSid;          //消息的发送者
 	std::string     sessionId;          //会话的ID
 	UInt32		    msgId;				//msg ID

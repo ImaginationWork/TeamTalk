@@ -126,5 +126,24 @@ private:
 	std::string m_sPlayingSessionID;//当前正在播放的会话ID
 	std::string m_sPlayingAID;//当前正在播放会话的声音IS
 };
-/******************************************************************************/
+
+
+
+class ImageMessageMananger //语音消息
+{
+public:
+    ~ImageMessageMananger(){}
+    static ImageMessageMananger* getInstance();
+
+    BOOL makeAppImageSid(IN const UInt32 msgId, IN const std::string sSessionId, IN const std::string imageExt, OUT std::string& sAID);
+    BOOL saveImageDataToFile(IN UCHAR* data, IN UINT32 lenth, IN std::string sFileName, OUT CString &sOutFileName);
+
+    BOOL pushImageMessageBySId(const std::string& sId, MessageEntity& msg);
+
+private:
+    SessionMessageMap           m_mapUnReadImageMsg;
+};
+
+
+
 #endif// RECEIVEMSGMANAGE_B3CDCA98_9B4E_482C_8342_7F2DF985F6D3_H__

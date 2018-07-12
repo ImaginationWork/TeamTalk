@@ -28,8 +28,9 @@ public:
 	virtual CString getDefaultAvatar() = 0;
 	virtual CString getUserTempDir() = 0;
 	virtual CString getDumpDir() = 0;
-	virtual CString getTTCommonAppdataUserDir() = 0;//在系统公共目录下
-	virtual CString GetAudioFileSavedPath() = 0;
+    virtual CString getTTCommonAppdataUserDir() = 0;//在系统公共目录下
+    virtual CString GetAudioFileSavedPath() = 0;
+    virtual CString getImageFileSavedPath() = 0;
 	virtual CString getEmotionFilesDir() = 0;
 	virtual CString getFileRecvDir() = 0;
 	/**
@@ -94,7 +95,9 @@ public:
 	* @exception there is no any exception to throw.
 	*/
 	virtual void doProcess1(IN std::string& pData,OUT std::string& pOutData) = 0;
-	virtual void doProcess2(IN std::string& pData, OUT std::string& pOutData) = 0;
+    virtual void doProcess2(IN std::string& pData, OUT std::string& pOutData) = 0;
+    virtual void doProcess1(IN std::vector<char> &pData, OUT std::vector<char> &pOutData) = 0;
+    virtual void doProcess2(IN std::vector<char> &pData, OUT std::vector<char> &pOutData) = 0;
 };
 
 #define ENCRYPT_MSG(p1,p2) module::getMiscModule()->doProcess1((p1),(p2))

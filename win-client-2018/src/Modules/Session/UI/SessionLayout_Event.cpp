@@ -543,11 +543,11 @@ void SessionLayout::OnSendImageCallback(std::shared_ptr<void> param)
 					}
 					if (pSessionInfo->sessionType == module::SESSION_USERTYPE)
 					{
-						msg.msgType = MSG_TYPE_TEXT_P2P;
+						msg.msgType = IM::BaseDefine::MSG_TYPE_SINGLE_TEXT;
 					}
 					else
 					{
-						msg.msgType = MSG_TYPE_TEXT_GROUP;
+						msg.msgType = IM::BaseDefine::MSG_TYPE_GROUP_TEXT;
 					}
 					msg.msgSessionType = pSessionInfo->sessionType;	//sessionType和FromType定义一致
 					msg.msgTime = module::getSessionModule()->getTime();

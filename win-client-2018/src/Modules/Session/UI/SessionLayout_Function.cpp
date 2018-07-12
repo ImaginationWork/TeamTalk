@@ -23,6 +23,8 @@
 #include "UIIMEdit.h"
 #include "utility/Multilingual.h"
 #include "utility/utilStrCodingAPI.h"
+#include "ProtocolBuffer/IM.BaseDefine.pb.h"
+#include <fstream>
 
 /******************************************************************************/
 void SessionLayout::_SendSessionMsg(IN MixedMsg mixMsg)
@@ -38,7 +40,7 @@ void SessionLayout::_SendSessionMsg(IN MixedMsg mixMsg)
 		msg.msgRenderType = MESSAGE_RENDERTYPE_TEXT;
 		module::SessionEntity* pSessionInfo = SessionEntityManager::getInstance()->getSessionEntityBySId(m_sId);
 		PTR_VOID(pSessionInfo);
-		msg.msgType = (pSessionInfo->sessionType == module::SESSION_USERTYPE) ? MSG_TYPE_TEXT_P2P : MSG_TYPE_TEXT_GROUP;
+		msg.msgType = (pSessionInfo->sessionType == module::SESSION_USERTYPE) ? IM::BaseDefine::MSG_TYPE_SINGLE_TEXT : IM::BaseDefine::MSG_TYPE_GROUP_TEXT;
 		msg.msgSessionType = pSessionInfo->sessionType;	
 		msg.msgTime = module::getSessionModule()->getTime();
 		SendMsgManage::getInstance()->pushSendingMsg(msg);
@@ -52,16 +54,64 @@ void SessionLayout::_SendSessionMsg(IN MixedMsg mixMsg)
 		//主界面 消息内容，时间更新
 		module::getSessionModule()->asynNotifyObserver(module::KEY_SESSION_TRAY_NEWMSGSEND, msg.sessionId);
 	}
-	else
-	{
-		for (ST_picData& picData : mixMsg.m_picDataVec)
-		{
+	else {
+		for (ST_picData& picData : mixMsg.m_picDataVec) {
+            MessageEntity msg;
+            std::string msgEncrypt;
+            std::ifstream ifs(picData.strLocalPicPath, std::ios::binary);
+            if (!ifs.is_open()) {
+                return;
+                LOG__(ERR, _T("could not open %s"), picData.strLocalPicPath);
+            }
+            auto startP = ifs.tellg();
+            ifs.seekg(0, std::ios::end);
+            auto fileSize = ifs.tellg() - startP;
+            std::vector<char> fileContent;
+            
+            fileContent.resize((unsigned int)(fileSize + msg.extraDataSize + 1), 0);
+
+            {
+                auto nPos = picData.strLocalPicPath.ReverseFind(_T('.'));
+                auto image_ext = util::cStringToString(picData.strLocalPicPath.Right(picData.strLocalPicPath.GetLength() - nPos - 1));
+                std::vector<char> tmp(msg.extraDataSize, '\0');
+                memcpy(tmp.data(), image_ext.c_str(), image_ext.size());
+                memcpy(fileContent.data(), tmp.data(), tmp.size());
+            }
+
+
+            ifs.seekg(0, std::ios::beg);
+            ifs.read(fileContent.data()+msg.extraDataSize, fileSize);
+
+            ENCRYPT_MSG(fileContent, msg.content_image);
+
+
+            msg.sessionId = m_sId;
+            msg.talkerSid = module::getSysConfigModule()->userID();
+            msg.msgRenderType = MESSAGE_RENDERTYPE_IMAGE;
+            module::SessionEntity* pSessionInfo = SessionEntityManager::getInstance()->getSessionEntityBySId(m_sId);
+            PTR_VOID(pSessionInfo);
+            msg.msgType = (pSessionInfo->sessionType == module::SESSION_USERTYPE) ? IM::BaseDefine::MSG_TYPE_SINGLE_IMAGE: IM::BaseDefine::MSG_TYPE_GROUP_IMAGE;
+            msg.msgSessionType = pSessionInfo->sessionType;
+            msg.msgTime = module::getSessionModule()->getTime();
+            SendMsgManage::getInstance()->pushSendingMsg(msg);
+
+            //更新会话时间
+            module::SessionEntity*  pSessionEntity = SessionEntityManager::getInstance()->getSessionEntityBySId(msg.sessionId);
+            if (pSessionEntity)
+            {
+                pSessionEntity->updatedTime = msg.msgTime;
+            }
+            //主界面 消息内容，时间更新
+            module::getSessionModule()->asynNotifyObserver(module::KEY_SESSION_TRAY_NEWMSGSEND, msg.sessionId);
+
+#if 0
 			//图片需要上传
 			SendImgParam param;
 			param.csFilePath = picData.strLocalPicPath;
 			m_pSendImgHttpOper = new SendImgHttpOperation(param
 				, BIND_CALLBACK_1(SessionLayout::OnSendImageCallback));
 			module::getHttpPoolModule()->pushHttpOperation(m_pSendImgHttpOper, TRUE);
+#endif
 		}
 		m_SendingMixedMSGList.push_back(mixMsg);
 	}
@@ -84,7 +134,7 @@ void SessionLayout::SendMsg()
 		//将消息投递给对方
 		_SendSessionMsg(mixMsg);
 		//本地消息展现
-		msg.msgType = MSG_TYPE_TEXT_P2P;
+		msg.msgType = IM::BaseDefine::MSG_TYPE_SINGLE_TEXT;
 		msg.talkerSid = module::getSysConfigModule()->userID();
 		msg.sessionId = m_sId;
 		msg.msgRenderType = MESSAGE_RENDERTYPE_TEXT;
@@ -141,8 +191,10 @@ BOOL SessionLayout::_DisplayMsgToIE(IN MessageEntity msg)
 		root["voicetime"] = util::cStringToString(sVoicetime);
 		root["voiceisread"] = msg.msgAudioReaded ? std::string("true") : string("false");
 	}
-	else
-	{
+    else if (MESSAGE_RENDERTYPE_IMAGE == msg.msgRenderType) {
+        //TODO
+    }
+	else {
 		CString csContent = util::stringToCString(msg.content);
 		ReceiveMsgManage::getInstance()->parseContent(csContent, FALSE, GetWidth());
 		std::string content = util::cStringToString(csContent);

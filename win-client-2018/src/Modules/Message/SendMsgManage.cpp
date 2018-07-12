@@ -163,7 +163,12 @@ void SendMsgManage::sendMessage(IN SendingMsg& sendingMsg)
 		imMsgData.set_msg_id(0);//发送的时候没有消息id，传0即可
 		imMsgData.set_create_time(sendingMsg.msg.msgTime);
 		imMsgData.set_msg_type(static_cast<IM::BaseDefine::MsgType>(sendingMsg.msg.msgType));
-		imMsgData.set_msg_data(sendingMsg.msg.content);
+        if (sendingMsg.msg.content.empty()) {
+            imMsgData.set_msg_data(sendingMsg.msg.content_image.data(), sendingMsg.msg.content_image.size());
+        }
+        else {
+            imMsgData.set_msg_data(sendingMsg.msg.content);
+        }
 		module::getTcpClientModule()->sendPacket(IM::BaseDefine::ServiceID::SID_MSG
 			, IM::BaseDefine::MessageCmdID::CID_MSG_DATA
 			, sendingMsg.seqNo

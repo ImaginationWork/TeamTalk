@@ -53,13 +53,12 @@ void _msgToTrace(const MessageEntity& msg)
 	CString csTime = time.Format(_T("%Y-%m-%d %H:%M:%S"));
 
 	LOG__(ERR,
-		_T("msgType = %d,msgRenderType = %d,msgSessionType = %d,msgTime = %s,content = %s,imageId = %s,sessionId = %s"),
+		_T("msgType = %d,msgRenderType = %d,msgSessionType = %d,msgTime = %s,content = %s,sessionId = %s"),
 		msg.msgType,
 		msg.msgRenderType,
 		msg.msgSessionType,
 		csTime,
 		util::stringToCString(msg.content),
-		util::stringToCString(msg.imageId),
 		util::stringToCString(msg.sessionId));
 }
 

@@ -89,7 +89,7 @@ BOOL ReceiveMsgManage::popMessageBySId(const std::string& sId, MessageEntity& ms
 	if (listChatMsg && !listChatMsg->empty())
 	{
 		msg = listChatMsg->front();
-		if (MSG_TYPE_AUDIO_P2P == msg.msgType && !msg.isReaded())//如果是语音未读消息,先存起来
+		if (IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO== msg.msgType && !msg.isReaded())//如果是语音未读消息,先存起来
 		{
 			AudioMessageMananger::getInstance()->pushAudioMessageBySId(sId, msg);
 		}
@@ -734,3 +734,80 @@ BOOL AudioMessageMananger::startPlayingAnimate(IN const std::string& sToPlayAID)
 	return FALSE;
 }
 
+ImageMessageMananger* ImageMessageMananger::getInstance()
+{
+    static ImageMessageMananger manager;
+    return &manager;
+}
+
+BOOL ImageMessageMananger::makeAppImageSid(IN const UInt32 msgId, IN const std::string sSessionId, IN const std::string imageExt, OUT std::string& sAID)
+{
+    sAID = util::uint32ToString(msgId) + string("_") + sSessionId + string(".")+ imageExt;
+    return TRUE;
+}
+
+BOOL ImageMessageMananger::saveImageDataToFile(IN UCHAR* data, IN UINT32 lenth, IN std::string sFileName, OUT CString &sOutFileName)
+{
+    sOutFileName = module::getMiscModule()->getImageFileSavedPath();
+
+    if (!::PathIsDirectory(sOutFileName))
+    {
+        util::createAllDirectories(sOutFileName);
+        sOutFileName += _T("\\");
+    }
+
+    sOutFileName += util::stringToCString(sFileName, CP_UTF8);
+
+    if (util::isFileExist(sOutFileName))
+    {
+        return TRUE;
+    }
+
+    HANDLE hFile = CreateFile(sOutFileName,
+        GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        NULL,
+        CREATE_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+    if (INVALID_HANDLE_VALUE == hFile)
+    {
+        DWORD res = GetLastError();
+        LOG__(ERR, _T("CreateFile error:GetLastError = %d"), res);
+        return FALSE;
+    }
+    ::SetFilePointer(hFile, 0, 0, FILE_END);
+
+    DWORD lret = 0;
+    BOOL  bRes = WriteFile(hFile, (LPCVOID)data, lenth, &lret, NULL);
+    if (!bRes)
+    {
+        DWORD res = GetLastError();
+        LOG__(ERR, _T("WriteFile error:GetLastError = %d"), res);
+        return FALSE;
+    }
+
+    if (NULL != hFile)
+    {
+        CloseHandle(hFile);
+        hFile = NULL;
+    }
+
+    return TRUE;
+}
+
+BOOL ImageMessageMananger::pushImageMessageBySId(const std::string& sId, MessageEntity& msg) {
+    SessionMessageMap::iterator it = m_mapUnReadImageMsg.find(sId);
+    if (it == m_mapUnReadImageMsg.end())
+    {
+        SessionMessage_List listChatMsg;
+        listChatMsg.push_back(msg);
+        m_mapUnReadImageMsg[sId] = listChatMsg;
+    }
+    else
+    {
+        SessionMessage_List& listChatMsg = it->second;
+        listChatMsg.push_back(msg);
+    }
+    return TRUE;
+}
