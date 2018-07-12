@@ -172,8 +172,10 @@ enum SessionType{
 enum MsgType{
 	MSG_TYPE_SINGLE_TEXT    = 0x01;
     MSG_TYPE_SINGLE_AUDIO   = 0x02;
+    MSG_TYPE_SINGLE_IMAGE   = 0x03;
     MSG_TYPE_GROUP_TEXT     = 0x11;
     MSG_TYPE_GROUP_AUDIO    = 0x12;
+    MSG_TYPE_GROUP_IMAGE    = 0x13;
 }
 
 enum ClientType{

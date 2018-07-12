@@ -77,26 +77,11 @@ enum {
     GENDER_WOMAN    = 2,
 };
 
-/*
-enum {
-    SESSION_TYPE_SINGLE     = 0x01,
-    SESSION_TYPE_GROUP      = 0x02,
-};
-*/
-
-/*
-enum {
-    MSG_TYPE_SINGLE_TEXT    = 0x01,
-    MSG_TYPE_SINGLE_AUDIO   = 0x02,
-    MSG_TYPE_GROUP_TEXT     = 0x11,
-    MSG_TYPE_GROUP_AUDIO    = 0x12,
-};
-*/
 
 #define CHECK_MSG_TYPE_SINGLE(type) \
 ({\
 bool bRet = false;\
-if ((IM::BaseDefine::MSG_TYPE_SINGLE_TEXT == type) || (IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO == type))\
+if ((IM::BaseDefine::MSG_TYPE_SINGLE_TEXT == type) || (IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO == type) || (IM::BaseDefine::MSG_TYPE_SINGLE_IMAGE == type))\
 {\
 bRet = true;\
 }\
@@ -107,7 +92,7 @@ bRet;\
 #define CHECK_MSG_TYPE_GROUP(type) \
 ({\
 bool bRet = false;\
-if ((IM::BaseDefine::MSG_TYPE_GROUP_TEXT == type) || (IM::BaseDefine::MSG_TYPE_GROUP_AUDIO == type))\
+if ((IM::BaseDefine::MSG_TYPE_GROUP_TEXT == type) || (IM::BaseDefine::MSG_TYPE_GROUP_AUDIO == type) || (IM::BaseDefine::MSG_TYPE_GROUP_IMAGE == type) )\
 {\
 bRet = true;\
 }\
@@ -125,6 +110,15 @@ typedef struct AudioMsgInfo{
     string      path;
     
 } AudioMsgInfo_t;
+
+
+typedef struct ImageMsgInfo {
+    uint32_t    audioId;
+    uint32_t    fileSize;
+    uint32_t    data_len;
+    uchar_t*    data;
+    string      path;
+} ImageMsgInfo_t;
 
 typedef struct DBUserInfo_t
 {

@@ -197,3 +197,31 @@ bool CHttpClient::DownloadByteFile(const string &url, AudioMsgInfo* pAudioMsg)
     }
     return true;
 }
+
+bool CHttpClient::DownloadByteFile(const string &url, ImageMsgInfo* pImageMsg)
+{
+    CURL* curl = curl_easy_init();
+    if (!curl)
+        return false;
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 2);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+    curl_easy_setopt(curl, CURLOPT_FORBID_REUSE, 1);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data_binary);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, pImageMsg);
+    CURLcode res = curl_easy_perform(curl);
+
+    int retcode = 0;
+    res = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &retcode);
+    if (CURLE_OK != res || retcode != 200) {
+        log("curl_easy_perform failed, res=%d, ret=%u", res, retcode);
+    }
+    double nLen = 0;
+    res = curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &nLen);
+    curl_easy_cleanup(curl);
+    if (nLen != pImageMsg->fileSize) {
+        return false;
+    }
+    return true;
+}

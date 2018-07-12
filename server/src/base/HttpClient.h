@@ -28,6 +28,7 @@ public:
     CURLcode Get(const string & strUrl, string & strResponse);
     string UploadByteFile(const string &url, void* data, int data_len);
     bool DownloadByteFile(const string &url, AudioMsgInfo* pAudioMsg);
+    bool DownloadByteFile(const string &url, ImageMsgInfo* pAudioMsg);
 };
 
 #endif
