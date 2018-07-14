@@ -84,7 +84,7 @@ bool CAudioModel::readAudios(list<IM::BaseDefine::MsgInfo>& lsMsg)
         for (auto it=lsMsg.begin(); it!=lsMsg.end(); )
         {
             IM::BaseDefine::MsgType nType = it->msg_type();
-            if((IM::BaseDefine::MSG_TYPE_GROUP_AUDIO ==  nType) || (IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO == nType))
+            if((IM::BaseDefine::MSG_TYPE_GROUP_AUDIO ==  nType) || (IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO == nType) || (IM::BaseDefine::MSG_TYPE_SINGLE_IMAGE == nType))
             {
                 string strSql = "select * from IMAudio where id=" + it->msg_data();
                 CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());

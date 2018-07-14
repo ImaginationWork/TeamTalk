@@ -16,6 +16,7 @@
 #include "../CachePool.h"
 #include "MessageModel.h"
 #include "AudioModel.h"
+#include "ImageModel.h"
 #include "SessionModel.h"
 #include "RelationModel.h"
 
@@ -23,6 +24,7 @@ using namespace std;
 
 CMessageModel* CMessageModel::m_pInstance = NULL;
 extern string strAudioEnc;
+extern string strImageEnc;
 
 CMessageModel::CMessageModel()
 {
@@ -184,6 +186,27 @@ bool CMessageModel::sendAudioMessage(uint32_t nRelateId, uint32_t nFromId, uint3
 	return bRet;
 }
 
+bool CMessageModel::sendImageMessage(uint32_t nRelateId, uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nMsgType, uint32_t nCreateTime, uint32_t nMsgId, const char* pMsgContent, uint32_t nMsgLen)
+{
+    if (nMsgLen <= 4) {
+        return false;
+    }
+
+    auto pImageModel = CImageModel::getInstance();
+    int nImageId = pImageModel->saveImageInfo(nFromId, nToId, nCreateTime, pMsgContent, nMsgLen);
+
+    bool bRet = true;
+    if (nImageId != -1) {
+        string strMsg = int2string(nImageId);
+        bRet = sendMessage(nRelateId, nFromId, nToId, nMsgType, nCreateTime, nMsgId, strMsg);
+    }
+    else {
+        bRet = false;
+    }
+
+    return bRet;
+}
+
 void CMessageModel::incMsgCount(uint32_t nFromId, uint32_t nToId)
 {
 	CacheManager* pCacheManager = CacheManager::getInstance();
@@ -294,6 +317,11 @@ void CMessageModel::getLastMsg(uint32_t nFromId, uint32_t nToId, uint32_t& nMsgI
                         // "[语音]"加密后的字符串
                         strMsgData = strAudioEnc;
                     }
+                    if (nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_IMAGE) {
+                        // "[语音]"加密后的字符串
+                        strMsgData = strImageEnc;
+                    }
+
                     else
                     {
                         strMsgData = pResultSet->GetString("content");

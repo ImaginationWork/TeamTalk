@@ -229,7 +229,40 @@ namespace DB_PROXY {
                         {
                             log("send msg to self. fromId=%u, toId=%u, msgType=%u", nFromId, nToId, nMsgType);
                         }
+                    } else if (nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_IMAGE) {
+                        if (nFromId != nToId) {
+                            nSessionId = CSessionModel::getInstance()->getSessionId(nFromId, nToId, IM::BaseDefine::SESSION_TYPE_SINGLE, false);
+                            if (INVALID_VALUE == nSessionId) {
+                                nSessionId = CSessionModel::getInstance()->addSession(nFromId, nToId, IM::BaseDefine::SESSION_TYPE_SINGLE);
+                            }
+                            nPeerSessionId = CSessionModel::getInstance()->getSessionId(nToId, nFromId, IM::BaseDefine::SESSION_TYPE_SINGLE, false);
+                            if (INVALID_VALUE == nPeerSessionId)
+                            {
+                                nSessionId = CSessionModel::getInstance()->addSession(nToId, nFromId, IM::BaseDefine::SESSION_TYPE_SINGLE);
+                            }
+                            uint32_t nRelateId = CRelationModel::getInstance()->getRelationId(nFromId, nToId, true);
+                            if (nSessionId != INVALID_VALUE && nRelateId != INVALID_VALUE)
+                            {
+                                nMsgId = pMsgModel->getMsgId(nRelateId);
+                                if (nMsgId != INVALID_VALUE) {
+                                    pMsgModel->sendImageMessage(nRelateId, nFromId, nToId, nMsgType, nCreateTime, nMsgId, msg.msg_data().c_str(), nMsgLen);
+                                    CSessionModel::getInstance()->updateSession(nSessionId, nNow);
+                                    CSessionModel::getInstance()->updateSession(nPeerSessionId, nNow);
+                                }
+                                else {
+                                    log("msgId is invalid. fromId=%u, toId=%u, nRelateId=%u, nSessionId=%u, nMsgType=%u", nFromId, nToId, nRelateId, nSessionId, nMsgType);
+                                }
+                            }
+                            else {
+                                log("sessionId or relateId is invalid. fromId=%u, toId=%u, nRelateId=%u, nSessionId=%u, nMsgType=%u", nFromId, nToId, nRelateId, nSessionId, nMsgType);
+                            }
+                        }
+                        else
+                        {
+                            log("send msg to self. fromId=%u, toId=%u, msgType=%u", nFromId, nToId, nMsgType);
+                        }
                     }
+
 
                     log("fromId=%u, toId=%u, type=%u, msgId=%u, sessionId=%u", nFromId, nToId, nMsgType, nMsgId, nSessionId);
 

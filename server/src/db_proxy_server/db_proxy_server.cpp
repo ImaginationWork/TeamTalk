@@ -25,6 +25,7 @@
 #include "SyncCenter.h"
 
 string strAudioEnc;
+string strImageEnc;
 // this callback will be replaced by imconn_callback() in OnConnect()
 void proxy_serv_callback(void* callback_data, uint8_t msg, uint32_t handle, void* pParam)
 {
@@ -118,13 +119,22 @@ puts("db init success");
     string strAesKey(str_aes_key, 32);
     CAes cAes = CAes(strAesKey);
     string strAudio = "[语音]";
+    string strImage = "[图片]";
     char* pAudioEnc;
+    char* pImageEnc;
     uint32_t nOutLen;
     if(cAes.Encrypt(strAudio.c_str(), strAudio.length(), &pAudioEnc, nOutLen) == 0)
     {
         strAudioEnc.clear();
         strAudioEnc.append(pAudioEnc, nOutLen);
         cAes.Free(pAudioEnc);
+    }
+
+    if (cAes.Encrypt(strImage.c_str(), strImage.length(), &pImageEnc, nOutLen) == 0)
+    {
+        strImageEnc.clear();
+        strImageEnc.append(pImageEnc, nOutLen);
+        cAes.Free(pImageEnc);
     }
 
 	uint16_t listen_port = atoi(str_listen_port);

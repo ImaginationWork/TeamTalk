@@ -417,7 +417,11 @@ void ClientConn::_HandleMsgData(CImPdu* pPdu)
         {
             nSessionType = IM::BaseDefine::SESSION_TYPE_SINGLE;
         }
-        else if(nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO)
+        else if (nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO)
+        {
+            nSessionType = IM::BaseDefine::SESSION_TYPE_SINGLE;
+        }
+        else if (nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_IMAGE)
         {
             nSessionType = IM::BaseDefine::SESSION_TYPE_SINGLE;
         }
