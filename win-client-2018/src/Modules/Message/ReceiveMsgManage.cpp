@@ -229,88 +229,94 @@ void ReceiveMsgManage::removeMessageBySId(const std::string& sId)
 }
 void ReceiveMsgManage::parseContent(CString& content, BOOL bFloatForm, Int32 chatWidth)
 {
-	_urlScan(content);
-	if (!bFloatForm)
-	{
-		content.Replace(_T("<"), _T("&lt;"));
-		content.Replace(_T(">"), _T("&gt;"));
-		content.Replace(_T("\""), _T("&quot;"));
-		content.Replace(_T("\'"), _T("&#039;"));
-		//content.Replace(_T("\n"),_T("<br>"));
-		for (int i = 0; i <= content.GetLength() - 1; i++)
-		if (content.GetAt(i) == 0x0D)//如果是回车
-		{
-			CString strfront = content.Mid(0, i);
-			CString strBack = content.Mid(i + 1, content.GetLength() - i - 1);
-			content = strfront + _T("<br>") + strBack;
-			i = i + 3;//替换的字符比原来多了3个，可以略过检查
-		}
-	}
-	int hitStartIndex = content.Find(CS_SPLIT_CODE_START);
-	if (hitStartIndex < 0 && !bFloatForm)
-	{
-		content.Replace(_T(" "), _T("&nbsp"));
-	}
+    // TODO: 尤其是“新图片收发协议”下，载入历史消息有bug，导致解析失败；
+    try {
+        _urlScan(content);
+        if (!bFloatForm)
+        {
+            content.Replace(_T("<"), _T("&lt;"));
+            content.Replace(_T(">"), _T("&gt;"));
+            content.Replace(_T("\""), _T("&quot;"));
+            content.Replace(_T("\'"), _T("&#039;"));
+            //content.Replace(_T("\n"),_T("<br>"));
+            for (int i = 0; i <= content.GetLength() - 1; i++)
+                if (content.GetAt(i) == 0x0D)//如果是回车
+                {
+                    CString strfront = content.Mid(0, i);
+                    CString strBack = content.Mid(i + 1, content.GetLength() - i - 1);
+                    content = strfront + _T("<br>") + strBack;
+                    i = i + 3;//替换的字符比原来多了3个，可以略过检查
+                }
+        }
+        int hitStartIndex = content.Find(CS_SPLIT_CODE_START);
+        if (hitStartIndex < 0 && !bFloatForm)
+        {
+            content.Replace(_T(" "), _T("&nbsp"));
+        }
 
-	//解析表情
-	int startIndex = content.Find(_T("["));
-	while (startIndex != -1)
-	{
-		int endIndex = content.Find(_T("]"), startIndex);
-		if (-1 == endIndex)
-			break;
-		CString csEmotion = content.Mid(startIndex, endIndex - startIndex + 1);
+        //解析表情
+        int startIndex = content.Find(_T("["));
+        while (startIndex != -1)
+        {
+            int endIndex = content.Find(_T("]"), startIndex);
+            if (-1 == endIndex)
+                break;
+            CString csEmotion = content.Mid(startIndex, endIndex - startIndex + 1);
 
-		CString csPath;
-		if (module::getEmotionModule()->getEmotionNameByID(csEmotion, csPath))
-		{
-			CString csHtml;
-			if (bFloatForm)
-			{
-				csHtml = util::getMultilingual()->getStringById(_T("STRID_FLOATFORM_EMOTION"));
-			}
-			else
-			{
-				if (-1 != csEmotion.Find(_T("牙牙")))
-				{
-					csHtml.Format(HTML_IMG_EMOTION_YAYA_TAG, csPath);
-				}
-				else
-					csHtml.Format(HTML_IMG_EMOTION_NORMAL_TAG, csPath);
-			}
-			content.Replace(csEmotion, csHtml);
-		}
-		startIndex = content.Find(_T("["), endIndex);
-	}
+            CString csPath;
+            if (module::getEmotionModule()->getEmotionNameByID(csEmotion, csPath))
+            {
+                CString csHtml;
+                if (bFloatForm)
+                {
+                    csHtml = util::getMultilingual()->getStringById(_T("STRID_FLOATFORM_EMOTION"));
+                }
+                else
+                {
+                    if (-1 != csEmotion.Find(_T("牙牙")))
+                    {
+                        csHtml.Format(HTML_IMG_EMOTION_YAYA_TAG, csPath);
+                    }
+                    else
+                        csHtml.Format(HTML_IMG_EMOTION_NORMAL_TAG, csPath);
+                }
+                content.Replace(csEmotion, csHtml);
+            }
+            startIndex = content.Find(_T("["), endIndex);
+        }
 
-	//替换图片
-	BOOL bCanRelaceSpace = TRUE;
-	startIndex = content.Find(CS_SPLIT_CODE_START);
-	while (startIndex != -1)
-	{
-		int endIndex = content.Find(CS_SPLIT_CODE_END, startIndex);
-		if (-1 == endIndex)
-			break;
-		CString csImgUrlPath = content.Mid(startIndex + CS_SPLIT_CODE_START.GetLength(), endIndex
-			- startIndex - CS_SPLIT_CODE_START.GetLength());
-		CString csImgPathTag = content.Mid(startIndex, endIndex - startIndex + CS_SPLIT_CODE_END.GetLength());
-		CString csHtml;
-		if (bFloatForm)
-		{
-			csHtml = util::getMultilingual()->getStringById(_T("STRID_FLOATFORM_IMAGE"));
-		}
-		else
-		{
-			chatWidth -= 130;
-			CString csTips = util::getMultilingual()->getStringById(_T("STRID_SESSIONMODULE_MESSAGE_SOURCEIMAGE"));
-			module::TTConfig* pCfg = module::getSysConfigModule()->getSystemConfig();
-			csHtml.Format(HTML_IMG_IMAGE_TAG, csImgUrlPath, csTips, csImgUrlPath, chatWidth);
-		}
-		content.Replace(csImgPathTag, csHtml);
-		startIndex = content.Find(CS_SPLIT_CODE_START, endIndex);
-	}
-	_urlReplace(content);
-	_Quickchat2Fromat(content);
+        //替换图片
+        BOOL bCanRelaceSpace = TRUE;
+        startIndex = content.Find(CS_SPLIT_CODE_START);
+        while (startIndex != -1)
+        {
+            int endIndex = content.Find(CS_SPLIT_CODE_END, startIndex);
+            if (-1 == endIndex)
+                break;
+            CString csImgUrlPath = content.Mid(startIndex + CS_SPLIT_CODE_START.GetLength(), endIndex
+                - startIndex - CS_SPLIT_CODE_START.GetLength());
+            CString csImgPathTag = content.Mid(startIndex, endIndex - startIndex + CS_SPLIT_CODE_END.GetLength());
+            CString csHtml;
+            if (bFloatForm)
+            {
+                csHtml = util::getMultilingual()->getStringById(_T("STRID_FLOATFORM_IMAGE"));
+            }
+            else
+            {
+                chatWidth -= 130;
+                CString csTips = util::getMultilingual()->getStringById(_T("STRID_SESSIONMODULE_MESSAGE_SOURCEIMAGE"));
+                module::TTConfig* pCfg = module::getSysConfigModule()->getSystemConfig();
+                csHtml.Format(HTML_IMG_IMAGE_TAG, csImgUrlPath, csTips, csImgUrlPath, chatWidth);
+            }
+            content.Replace(csImgPathTag, csHtml);
+            startIndex = content.Find(CS_SPLIT_CODE_START, endIndex);
+        }
+        _urlReplace(content);
+        _Quickchat2Fromat(content);
+    }
+    catch (std::exception &e) {
+        LOG__(ERR, util::stringToCString(e.what()));
+    }
 }
 
 SessionMessage_List* ReceiveMsgManage::_getChatMsgListBySID(const std::string& sId)

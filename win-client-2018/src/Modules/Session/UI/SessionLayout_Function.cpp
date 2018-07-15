@@ -192,7 +192,10 @@ BOOL SessionLayout::_DisplayMsgToIE(IN MessageEntity msg)
 		root["voiceisread"] = msg.msgAudioReaded ? std::string("true") : string("false");
 	}
     else if (MESSAGE_RENDERTYPE_IMAGE == msg.msgRenderType) {
-        //TODO
+        CString csContent = util::stringToCString(msg.content);
+        ReceiveMsgManage::getInstance()->parseContent(csContent, FALSE, GetWidth());
+        std::string content = util::cStringToString(csContent);
+        root["content"] = content;
     }
 	else {
 		CString csContent = util::stringToCString(msg.content);
