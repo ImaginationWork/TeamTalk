@@ -85,12 +85,49 @@ extern "C" {
         return carr;
     }
     
+    jbyteArray Java_com_mogujie_tt_Security_EncryptMsg2(JNIEnv* env, jobject obj, jbyteArray inputArray)
+    {
+        const char *pInData = (const char *) env->GetByteArrayElements(inputArray, 0);
+        uint32_t nInLen = env->GetArrayLength(inputArray);
+        
+        uint32_t nRemain = nInLen % 16;
+        uint32_t nBlocks = (nInLen + 15) / 16;
+        
+        if (nRemain > 12 || nRemain == 0) {
+            nBlocks += 1;
+        }
+        uint32_t nEncryptLen = nBlocks * 16;
+        
+        unsigned char* pData = (unsigned char*) calloc(nEncryptLen, 1);
+        memcpy(pData, pInData, nInLen);
+        env->ReleaseByteArrayElements(inputArray,(jbyte*)pInData,JNI_ABORT);
+        
+        unsigned char* pEncData = (unsigned char*) malloc(nEncryptLen);
+        
+        WriteUint32((pData + nEncryptLen - 4), nInLen);
+        AES_KEY aesKey;
+        const char *key = "12345678901234567890123456789012";
+        AES_set_encrypt_key((const unsigned char*)key, 256, &aesKey);
+        for (uint32_t i = 0; i < nBlocks; i++) {
+            AES_encrypt(pData + i * 16, pEncData + i * 16, &aesKey);
+        }
+        
+        free(pData);
+        string strEnc((char*)pEncData, nEncryptLen);
+        free(pEncData);
+        string strDec = base64_encode(strEnc);
+        
+        jbyteArray carr = env->NewByteArray(strDec.length());
+        env->SetByteArrayRegion(carr,0,strDec.length(),(jbyte*)strDec.c_str());
+        return carr;
+    }
+    
     /**
      * 解密
      */
     jbyteArray Java_com_mogujie_tt_Security_DecryptMsg(JNIEnv* env, jobject obj, jstring jstr)
     {
-        const char *pInData = env->GetStringUTFChars(jstr, NULL);   //获取待揭秘内容,转换格式
+        const char *pInData = env->GetStringUTFChars(jstr, NULL); 
         uint32_t nInLen = strlen(pInData);
         string strInData(pInData, nInLen);
         env->ReleaseStringUTFChars(jstr,pInData);
@@ -115,7 +152,7 @@ extern "C" {
         AES_KEY aesKey;
         
         const char *key = "12345678901234567890123456789012";
-        AES_set_decrypt_key((const unsigned char*) key, 256, &aesKey);           //设置AES解密密钥
+        AES_set_decrypt_key((const unsigned char*) key, 256, &aesKey);   
         for (uint32_t i = 0; i < nBlocks; i++) {
             AES_decrypt(pData + i * 16, (unsigned char*)pTmp + i * 16, &aesKey);
         }
@@ -135,6 +172,54 @@ extern "C" {
         return carr;
     }
     
+    jbyteArray Java_com_mogujie_tt_Security_DecryptMsg2(JNIEnv* env, jobject obj, jbyteArray inputArray)
+    {
+        const char *pInData = (const char *)env->GetByteArrayElements(inputArray, NULL);  
+        uint32_t nInLen = env->GetArrayLength(inputArray);
+        string strInData(pInData, nInLen);
+        env->ReleaseByteArrayElements(inputArray,(jbyte*)pInData,JNI_ABORT);
+        std::string strResult = base64_decode(strInData);
+        uint32_t nLen = (uint32_t)strResult.length();
+        if(nLen == 0)
+        {
+            jbyteArray carr = env->NewByteArray(0);
+            return carr;
+        }
+        
+        const unsigned char* pData = (const unsigned char*) strResult.c_str();
+        
+        if (nLen % 16 != 0) {
+            jbyteArray carr = env->NewByteArray(0);
+            return carr;
+        }
+        // 先申请nLen 个长度，解密完成后的长度应该小于该长度
+        char* pTmp = (char*)malloc(nLen + 1);
+        
+        uint32_t nBlocks = nLen / 16;
+        AES_KEY aesKey;
+        
+        const char *key = "12345678901234567890123456789012";
+        AES_set_decrypt_key((const unsigned char*) key, 256, &aesKey);     
+        for (uint32_t i = 0; i < nBlocks; i++) {
+            AES_decrypt(pData + i * 16, (unsigned char*)pTmp + i * 16, &aesKey);
+        }
+        uchar_t* pStart = (uchar_t*)pTmp+nLen-4;
+        uint32_t nOutLen = ReadUint32(pStart);
+        
+        if(nOutLen > nLen)
+        {
+            free(pTmp);
+            jbyteArray carr = env->NewByteArray(0);
+            return carr;
+        }
+        pTmp[nOutLen] = 0;
+        jbyteArray carr = env->NewByteArray(nOutLen);
+        env->SetByteArrayRegion(carr,0,nOutLen,(jbyte*)pTmp);
+        free(pTmp);
+        return carr;
+    }
+
+
     jbyteArray Java_com_mogujie_tt_Security_EncryptPass(JNIEnv* env, jobject obj, jstring jstr)
     {
         const char *pInData = env->GetStringUTFChars(jstr, NULL);		//待加密内容,转换格式

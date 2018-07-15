@@ -5,6 +5,9 @@ public class Security {
 	public native byte[] DecryptMsg(String strMsg);
 	public native byte[] EncryptMsg(String strMsg);
 
+	public native byte[] DecryptMsg2(byte[] inputArray);
+	public native byte[] EncryptMsg2(byte[] inputArray);
+
 	public native byte[] EncryptPass(String strPass);
 	
 	static{

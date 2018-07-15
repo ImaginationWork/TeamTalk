@@ -6,6 +6,7 @@ import com.mogujie.tt.config.DBConstant;
 import com.mogujie.tt.DB.entity.MessageEntity;
 import com.mogujie.tt.config.MessageConstant;
 import com.mogujie.tt.imservice.support.SequenceNumberMaker;
+import com.mogujie.tt.protobuf.IMBaseDefine;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -35,6 +36,22 @@ public class TextMessage extends MessageEntity implements Serializable {
          updated = entity.getUpdated();
      }
 
+    public static MessageEntity parseFromNet(IMBaseDefine.MsgInfo msgInfo) {
+        MessageEntity messageEntity = new MessageEntity();
+
+        messageEntity.setCreated(msgInfo.getCreateTime());
+        messageEntity.setUpdated(msgInfo.getCreateTime());
+        messageEntity.setFromId(msgInfo.getFromSessionId());
+        messageEntity.setMsgId(msgInfo.getMsgId());
+        messageEntity.setMsgType(msgInfo.getMsgType().getNumber());
+        messageEntity.setStatus(MessageConstant.MSG_SUCCESS);
+        messageEntity.setContent(msgInfo.getMsgData().toStringUtf8());
+        String desMessage = new String(com.mogujie.tt.Security.getInstance().DecryptMsg(msgInfo.getMsgData().toStringUtf8()));
+        messageEntity.setContent(desMessage);
+        messageEntity = TextMessage.parseFromNet(messageEntity);
+
+        return messageEntity;
+    }
      public static TextMessage parseFromNet(MessageEntity entity){
          TextMessage textMessage = new TextMessage(entity);
          textMessage.setStatus(MessageConstant.MSG_SUCCESS);
@@ -60,8 +77,8 @@ public class TextMessage extends MessageEntity implements Serializable {
         textMessage.setDisplayType(DBConstant.SHOW_ORIGIN_TEXT_TYPE);
         textMessage.setGIfEmo(true);
         int peerType = peerEntity.getType();
-        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? DBConstant.MSG_TYPE_GROUP_TEXT
-                : DBConstant.MSG_TYPE_SINGLE_TEXT;
+        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? IMBaseDefine.MsgType.MSG_TYPE_GROUP_TEXT_VALUE
+                : IMBaseDefine.MsgType.MSG_TYPE_SINGLE_TEXT_VALUE;
         textMessage.setMsgType(msgType);
         textMessage.setStatus(MessageConstant.MSG_SENDING);
         // 内容的设定

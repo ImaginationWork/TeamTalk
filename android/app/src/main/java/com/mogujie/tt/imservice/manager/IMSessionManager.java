@@ -190,7 +190,7 @@ public class IMSessionManager extends IMManager {
     public void updateSession(GroupEntity entity){
         logger.d("recent#updateSession GroupEntity:%s", entity);
         SessionEntity sessionEntity = new SessionEntity();
-        sessionEntity.setLatestMsgType(DBConstant.MSG_TYPE_GROUP_TEXT);
+        sessionEntity.setLatestMsgType(IMBaseDefine.MsgType.MSG_TYPE_GROUP_TEXT_VALUE);
         sessionEntity.setUpdated(entity.getUpdated());
         sessionEntity.setCreated(entity.getCreated());
         sessionEntity.setLatestMsgData("[你创建的新群喔]");

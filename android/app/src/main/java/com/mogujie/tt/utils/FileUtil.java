@@ -489,6 +489,15 @@ public class FileUtil
         return buffer;
     }
 
+    public static byte[] File2byteAndAppendHeader(byte[] header, String filePath){
+        byte fileByte[] = File2byte(filePath);
+        byte out[] = new byte[header.length+fileByte.length];
+        System.arraycopy(header, 0, out, 0, header.length);
+        System.arraycopy(fileByte, 0, out, header.length, fileByte.length);
+        return out;
+    }
+
+
     public static String getExtensionName(String filename) {
         if ((filename != null) && (filename.length() > 0)) {
             int dot = filename.lastIndexOf('.');

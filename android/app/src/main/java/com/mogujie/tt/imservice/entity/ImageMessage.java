@@ -5,16 +5,22 @@ import com.mogujie.tt.DB.entity.PeerEntity;
 import com.mogujie.tt.DB.entity.UserEntity;
 import com.mogujie.tt.config.DBConstant;
 import com.mogujie.tt.config.MessageConstant;
+import com.mogujie.tt.config.SysConstant;
 import com.mogujie.tt.imservice.support.SequenceNumberMaker;
+import com.mogujie.tt.protobuf.IMBaseDefine;
 import com.mogujie.tt.ui.adapter.album.ImageItem;
+import com.mogujie.tt.utils.CommonUtil;
+import com.mogujie.tt.utils.FileUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -29,6 +35,7 @@ public class ImageMessage extends MessageEntity implements Serializable {
     /**图片的网络地址*/
     private String url = "";
     private int loadStatus;
+    private static int extHeaderLength = 10; // TODO: USE PROTOBUF INSTEAD
 
     //存储图片消息
     private static java.util.HashMap<Long,ImageMessage> imageMessageMap = new java.util.HashMap<Long,ImageMessage>();
@@ -104,34 +111,74 @@ public class ImageMessage extends MessageEntity implements Serializable {
          updated = entity.getUpdated();
     }
 
+    public static String saveImageToFile(byte[] content, String mainName) {
+        try {
+            byte header[] = new byte[extHeaderLength];
+            System.arraycopy(content, 0, header, 0, extHeaderLength);
+
+            int extLength = 0;
+            for (int i = 0; i < extHeaderLength; i++){
+                if (header[i] == 0){
+                    extLength = i;
+                    break;
+                }
+            }
+
+            byte extBytes[] = new byte[extLength];
+            System.arraycopy(header, 0, extBytes, 0, extLength);
+            String ext = new String(extBytes);
+
+            String savePath = CommonUtil.getImageSavePath(mainName + "."+ext);
+            File file = new File(savePath);
+            FileOutputStream fops = new FileOutputStream(file);
+            fops.write(content,extHeaderLength,content.length-extHeaderLength);
+            fops.flush();
+            fops.close();
+            return savePath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static MessageEntity parseFromNet(IMBaseDefine.MsgInfo msgInfo) {
+        ImageMessage messageEntity = new ImageMessage();
+
+        messageEntity.setCreated(msgInfo.getCreateTime());
+        messageEntity.setUpdated(msgInfo.getCreateTime());
+        messageEntity.setFromId(msgInfo.getFromSessionId());
+        messageEntity.setMsgId(msgInfo.getMsgId());
+        messageEntity.setMsgType(msgInfo.getMsgType().getNumber());
+        messageEntity.setStatus(MessageConstant.MSG_SUCCESS);
+        messageEntity.setDisplayType(DBConstant.SHOW_IMAGE_TYPE);
+//        messageEntity.setContent(msgInfo.getMsgData().toStringUtf8());
+        byte desMessage[] = com.mogujie.tt.Security.getInstance().DecryptMsg2(msgInfo.getMsgData().toByteArray());
+        String finalPath = saveImageToFile(desMessage, msgInfo.getMsgId()+"_"+msgInfo.getFromSessionId());
+        try {
+            JSONObject extraContent = new JSONObject();
+            extraContent.put("path",finalPath);
+            extraContent.put("loadStatus",MessageConstant.IMAGE_LOADED_SUCCESS);
+            messageEntity.setContent(extraContent.toString());
+
+            messageEntity.setPath(finalPath);
+            messageEntity.setLoadStatus(MessageConstant.IMAGE_LOADED_SUCCESS);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        messageEntity = ImageMessage.parseFromNet(messageEntity);
+
+        return messageEntity;
+    }
+
+
     /**接受到网络包，解析成本地的数据*/
     public static ImageMessage parseFromNet(MessageEntity entity) throws JSONException {
         String strContent = entity.getContent();
-        // 判断开头与结尾
-        if (strContent.startsWith(MessageConstant.IMAGE_MSG_START)
-                && strContent.endsWith(MessageConstant.IMAGE_MSG_END)) {
-            // image message todo 字符串处理下
-            ImageMessage imageMessage = new ImageMessage(entity);
-            imageMessage.setDisplayType(DBConstant.SHOW_IMAGE_TYPE);
-            String imageUrl = strContent.substring(MessageConstant.IMAGE_MSG_START.length());
-            imageUrl = imageUrl.substring(0,imageUrl.indexOf(MessageConstant.IMAGE_MSG_END));
-
-            /**抽离出来 或者用gson*/
-            JSONObject extraContent = new JSONObject();
-            extraContent.put("path","");
-            extraContent.put("url",imageUrl);
-            extraContent.put("loadStatus", MessageConstant.IMAGE_UNLOAD);
-            String imageContent = extraContent.toString();
-            imageMessage.setContent(imageContent);
-
-            imageMessage.setUrl(imageUrl.isEmpty() ? null : imageUrl);
-            imageMessage.setContent(strContent);
-            imageMessage.setLoadStatus(MessageConstant.IMAGE_UNLOAD);
-            imageMessage.setStatus(MessageConstant.MSG_SUCCESS);
-            return imageMessage;
-        }else{
-            throw new RuntimeException("no image type,cause by [start,end] is wrong!");
-        }
+        ImageMessage textMessage = new ImageMessage(entity);
+        textMessage.setStatus(MessageConstant.MSG_SUCCESS);
+        textMessage.setDisplayType(DBConstant.SHOW_IMAGE_TYPE);
+        return textMessage;
     }
 
 
@@ -145,7 +192,6 @@ public class ImageMessage extends MessageEntity implements Serializable {
         try {
             extraContent = new JSONObject(originContent);
             imageMessage.setPath(extraContent.getString("path"));
-            imageMessage.setUrl(extraContent.getString("url"));
             int loadStatus = extraContent.getInt("loadStatus");
 
             //todo temp solution
@@ -183,8 +229,8 @@ public class ImageMessage extends MessageEntity implements Serializable {
         msg.setDisplayType(DBConstant.SHOW_IMAGE_TYPE);
         // content 自动生成的
         int peerType = peerEntity.getType();
-        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? DBConstant.MSG_TYPE_GROUP_TEXT :
-                DBConstant.MSG_TYPE_SINGLE_TEXT;
+        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? IMBaseDefine.MsgType.MSG_TYPE_GROUP_IMAGE_VALUE:
+                IMBaseDefine.MsgType.MSG_TYPE_SINGLE_IMAGE_VALUE ;
         msg.setMsgType(msgType);
 
         msg.setStatus(MessageConstant.MSG_SENDING);
@@ -203,8 +249,8 @@ public class ImageMessage extends MessageEntity implements Serializable {
         imageMessage.setDisplayType(DBConstant.SHOW_IMAGE_TYPE);
         imageMessage.setPath(takePhotoSavePath);
         int peerType = peerEntity.getType();
-        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? DBConstant.MSG_TYPE_GROUP_TEXT
-                : DBConstant.MSG_TYPE_SINGLE_TEXT;
+        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? IMBaseDefine.MsgType.MSG_TYPE_GROUP_TEXT_VALUE
+                : IMBaseDefine.MsgType.MSG_TYPE_SINGLE_TEXT_VALUE;
         imageMessage.setMsgType(msgType);
 
         imageMessage.setStatus(MessageConstant.MSG_SENDING);
@@ -221,7 +267,6 @@ public class ImageMessage extends MessageEntity implements Serializable {
         JSONObject extraContent = new JSONObject();
         try {
             extraContent.put("path",path);
-            extraContent.put("url",url);
             extraContent.put("loadStatus",loadStatus);
             String imageContent = extraContent.toString();
             return imageContent;
@@ -234,12 +279,20 @@ public class ImageMessage extends MessageEntity implements Serializable {
     @Override
     public byte[] getSendContent() {
         // 发送的时候非常关键
-        String sendContent = MessageConstant.IMAGE_MSG_START
-                + url + MessageConstant.IMAGE_MSG_END;
+        byte header[] = new byte[extHeaderLength];
+        Arrays.fill(header, (byte)0);
+        String fileName = this.getPath();
+
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        byte ext[] = suffix.getBytes();
+
+        System.arraycopy(ext, 0, header, 0, ext.length);
+        byte out[] = FileUtil.File2byteAndAppendHeader(header, this.getPath());
+
         /**
          * 加密
          */
-       String  encrySendContent =new String(com.mogujie.tt.Security.getInstance().EncryptMsg(sendContent));
+       String  encrySendContent =new String(com.mogujie.tt.Security.getInstance().EncryptMsg2(out));
 
         try {
             return encrySendContent.getBytes("utf-8");
@@ -256,14 +309,6 @@ public class ImageMessage extends MessageEntity implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public int getLoadStatus() {

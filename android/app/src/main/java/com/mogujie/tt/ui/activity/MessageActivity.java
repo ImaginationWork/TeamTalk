@@ -227,6 +227,8 @@ public class MessageActivity extends TTBaseActivity
         initView();
         imServiceConnector.connect(this);
         logger.d("message_activity#register im service and eventBus");
+
+        EventBus.getDefault().register(this, SysConstant.MESSAGE_EVENTBUS_PRIORITY);
     }
 
     // 触发条件,imservice链接成功，或者newIntent
@@ -286,7 +288,6 @@ public class MessageActivity extends TTBaseActivity
         logger.d("message_activity#onresume:%s", this);
         super.onResume();
 
-        EventBus.getDefault().register(this, SysConstant.MESSAGE_EVENTBUS_PRIORITY);
 
         IMApplication.gifRunning = true;
         historyTimes = 0;
@@ -306,6 +307,7 @@ public class MessageActivity extends TTBaseActivity
         albumList.clear();
         sensorManager.unregisterListener(this, sensor);
         ImageMessage.clearImageMessageList();
+        EventBus.getDefault().unregister(this);
         unregisterReceiver(receiver);
         super.onDestroy();
     }
@@ -1113,7 +1115,6 @@ public class MessageActivity extends TTBaseActivity
     protected void onPause() {
         logger.d("message_activity#onPause:%s", this);
 
-        EventBus.getDefault().unregister(this);
         super.onPause();
     }
 

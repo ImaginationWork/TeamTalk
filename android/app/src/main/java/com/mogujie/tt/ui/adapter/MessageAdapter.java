@@ -22,6 +22,7 @@ import com.mogujie.tt.DB.entity.MessageEntity;
 import com.mogujie.tt.DB.entity.UserEntity;
 import com.mogujie.tt.R;
 import com.mogujie.tt.config.MessageConstant;
+import com.mogujie.tt.protobuf.IMBaseDefine;
 import com.mogujie.tt.ui.helper.AudioPlayerHandler;
 import com.mogujie.tt.config.IntentConstant;
 import com.mogujie.tt.imservice.entity.AudioMessage;
@@ -92,7 +93,7 @@ public class MessageAdapter extends BaseAdapter {
      * ----------------------添加历史消息-----------------
      */
     public void addItem(final MessageEntity msg) {
-        if (msg.getDisplayType() == DBConstant.MSG_TYPE_SINGLE_TEXT) {
+        if (msg.getDisplayType() == IMBaseDefine.MsgType.MSG_TYPE_SINGLE_TEXT_VALUE) {
             if (isMsgGif(msg)) {
                 msg.setGIfEmo(true);
             } else {
@@ -176,7 +177,7 @@ public class MessageAdapter extends BaseAdapter {
         int preTime = 0;
         int nextTime = 0;
         for (MessageEntity msg : historyList) {
-            if (msg.getDisplayType() == DBConstant.MSG_TYPE_SINGLE_TEXT) {
+            if (msg.getDisplayType() == IMBaseDefine.MsgType.MSG_TYPE_SINGLE_TEXT_VALUE) {
                 if (isMsgGif(msg)) {
                     msg.setGIfEmo(true);
                 } else {
@@ -303,13 +304,9 @@ public class MessageAdapter extends BaseAdapter {
                         break;
                     case DBConstant.SHOW_IMAGE_TYPE:
                         ImageMessage imageMessage = (ImageMessage) info;
-                        if (CommonUtil.gifCheck(imageMessage.getUrl())) {
-                            type = isMine ? RenderType.MESSAGE_TYPE_MINE_GIF_IMAGE
-                                    : RenderType.MESSAGE_TYPE_OTHER_GIF_IMAGE;
-                        } else {
+
                             type = isMine ? RenderType.MESSAGE_TYPE_MINE_IMAGE
                                     : RenderType.MESSAGE_TYPE_OTHER_IMAGE;
-                        }
 
                         break;
                     case DBConstant.SHOW_ORIGIN_TEXT_TYPE:
@@ -388,7 +385,7 @@ public class MessageAdapter extends BaseAdapter {
         /**保存在本地的path*/
         final String imagePath = imageMessage.getPath();
         /**消息中的image路径*/
-        final String imageUrl = imageMessage.getUrl();
+//        final String imageUrl = imageMessage.getUrl();
 
         if (null == convertView) {
             imageRenderView = ImageRenderView.inflater(ctx, parent, isMine);
@@ -492,9 +489,9 @@ public class MessageAdapter extends BaseAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                final String url = imageMessage.getUrl();
+//                final String url = imageMessage.getUrl();
                 Intent intent = new Intent(ctx, PreviewGifActivity.class);
-                intent.putExtra(IntentConstant.PREVIEW_TEXT_CONTENT, url);
+//                intent.putExtra(IntentConstant.PREVIEW_TEXT_CONTENT, url);
                 ctx.startActivity(intent);
                 ((Activity) ctx).overridePendingTransition(R.anim.tt_image_enter, R.anim.tt_stay);
             }

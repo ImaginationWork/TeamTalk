@@ -5,6 +5,7 @@ package com.mogujie.tt.DB.entity;
 // KEEP INCLUDES - put your custom includes here
 
 import com.mogujie.tt.config.DBConstant;
+import com.mogujie.tt.protobuf.IMBaseDefine;
 import com.mogujie.tt.protobuf.helper.EntityChangeEngine;
 /**
  * 这个类不同与其他自动生成代码
@@ -154,11 +155,11 @@ public class MessageEntity implements java.io.Serializable {
      */
     public int getSessionType() {
         switch (msgType) {
-            case  DBConstant.MSG_TYPE_SINGLE_TEXT:
-            case  DBConstant.MSG_TYPE_SINGLE_AUDIO:
+            case  IMBaseDefine.MsgType.MSG_TYPE_SINGLE_TEXT_VALUE:
+            case  IMBaseDefine.MsgType.MSG_TYPE_SINGLE_AUDIO_VALUE:
                 return DBConstant.SESSION_TYPE_SINGLE;
-            case DBConstant.MSG_TYPE_GROUP_TEXT:
-            case DBConstant.MSG_TYPE_GROUP_AUDIO:
+            case IMBaseDefine.MsgType.MSG_TYPE_GROUP_TEXT_VALUE:
+            case IMBaseDefine.MsgType.MSG_TYPE_GROUP_AUDIO_VALUE:
                 return DBConstant.SESSION_TYPE_GROUP;
             default:
                 //todo 有问题

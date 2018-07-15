@@ -1,6 +1,7 @@
 package com.mogujie.tt.imservice.manager;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import com.google.protobuf.ByteString;
@@ -19,19 +20,21 @@ import com.mogujie.tt.imservice.entity.TextMessage;
 import com.mogujie.tt.imservice.event.MessageEvent;
 import com.mogujie.tt.imservice.event.PriorityEvent;
 import com.mogujie.tt.imservice.event.RefreshHistoryMsgEvent;
-import com.mogujie.tt.imservice.service.LoadImageService;
 import com.mogujie.tt.protobuf.helper.EntityChangeEngine;
 import com.mogujie.tt.protobuf.helper.Java2ProtoBuf;
 import com.mogujie.tt.protobuf.helper.ProtoBuf2JavaBean;
 import com.mogujie.tt.protobuf.IMBaseDefine;
 import com.mogujie.tt.protobuf.IMMessage;
 import com.mogujie.tt.imservice.support.SequenceNumberMaker;
+import com.mogujie.tt.utils.FileUtil;
 import com.mogujie.tt.utils.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -159,7 +162,7 @@ public class IMMessageManager extends IMManager{
             throw new RuntimeException("#sendMessage# msgId is wrong,cause by 0!");
         }
 
-        IMBaseDefine.MsgType msgType = Java2ProtoBuf.getProtoMsgType(msgEntity.getMsgType());
+        IMBaseDefine.MsgType msgType = IMBaseDefine.MsgType.valueOf(msgEntity.getMsgType());
         byte[] sendContent = msgEntity.getSendContent();
 
 
@@ -297,24 +300,7 @@ public class IMMessageManager extends IMManager{
 
 		for (ImageMessage msg : msgList) {
 			logger.d("chat#pic#sendImage  msg:%s",msg);
-			// image message would wrapped as a text message after uploading
-            int loadStatus = msg.getLoadStatus();
-
-            switch (loadStatus){
-                case MessageConstant.IMAGE_LOADED_FAILURE:
-                case MessageConstant.IMAGE_UNLOAD:
-                case MessageConstant.IMAGE_LOADING:
-                    msg.setLoadStatus(MessageConstant.IMAGE_LOADING);
-                    Intent loadImageIntent = new Intent(ctx, LoadImageService.class);
-                    loadImageIntent.putExtra(SysConstant.UPLOAD_IMAGE_INTENT_PARAMS,msg);
-                    ctx.startService(loadImageIntent);
-                    break;
-                case MessageConstant.IMAGE_LOADED_SUCCESS:
-                        sendMessage(msg);
-                    break;
-                default:
-                    throw new RuntimeException("sendImages#status不可能出现的状态");
-            }
+            sendMessage(msg);
 		}
         /**将最后一条更新到Session上面*/
         sessionManager.updateSession(msgList.get(len-1));
@@ -654,17 +640,17 @@ public class IMMessageManager extends IMManager{
 
         ImageMessage imageMessage = (ImageMessage)imageEvent.getMessageEntity();
         logger.d("pic#onImageUploadFinish");
-        String imageUrl = imageMessage.getUrl();
-        logger.d("pic#imageUrl:%s", imageUrl);
-        String realImageURL = "";
-        try {
-            realImageURL = URLDecoder.decode(imageUrl, "utf-8");
-            logger.d("pic#realImageUrl:%s", realImageURL);
-        } catch (UnsupportedEncodingException e) {
-            logger.e(e.toString());
-        }
-
-        imageMessage.setUrl(realImageURL);
+//        String imageUrl = imageMessage.getUrl();
+//        logger.d("pic#imageUrl:%s", imageUrl);
+//        String realImageURL = "";
+//        try {
+//            realImageURL = URLDecoder.decode(imageUrl, "utf-8");
+//            logger.d("pic#realImageUrl:%s", realImageURL);
+//        } catch (UnsupportedEncodingException e) {
+//            logger.e(e.toString());
+//        }
+//
+//        imageMessage.setUrl(realImageURL);
         imageMessage.setStatus(MessageConstant.MSG_SUCCESS);
         imageMessage.setLoadStatus(MessageConstant.IMAGE_LOADED_SUCCESS);
         dbInterface.insertOrUpdateMessage(imageMessage);
@@ -673,9 +659,9 @@ public class IMMessageManager extends IMManager{
         imageEvent.setEvent(MessageEvent.Event.HANDLER_IMAGE_UPLOAD_SUCCESS);
         imageEvent.setMessageEntity(imageMessage);
         triggerEvent(imageEvent);
-
-        imageMessage.setContent(MessageConstant.IMAGE_MSG_START
-                + realImageURL + MessageConstant.IMAGE_MSG_END);
+//
+//        imageMessage.setContent(MessageConstant.IMAGE_MSG_START
+//                + realImageURL + MessageConstant.IMAGE_MSG_END);
         sendMessage(imageMessage);
     }
 

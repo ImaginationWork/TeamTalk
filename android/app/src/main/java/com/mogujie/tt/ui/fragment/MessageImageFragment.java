@@ -106,7 +106,7 @@ public class MessageImageFragment extends android.support.v4.app.Fragment {
         try {
 
             //@ZJ 破图的展示
-            String imageUrl = messageInfo.getUrl();
+            String imageUrl = new String();//messageInfo.getUrl();
             if (!TextUtils.isEmpty(messageInfo.getPath()) && FileUtil.isFileExist(messageInfo.getPath())) {
                 imageUrl = "file://" + messageInfo.getPath();
             }

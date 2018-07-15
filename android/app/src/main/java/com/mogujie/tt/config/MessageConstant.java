@@ -22,8 +22,4 @@ public interface MessageConstant {
     public final int   AUDIO_UNREAD =1;
     public final int   AUDIO_READED = 2;
 
-    /**图片消息的前后常量*/
-    public  final String IMAGE_MSG_START = "&$#@~^@[{:";
-    public  final String IMAGE_MSG_END = ":}]&$~@#@";
-
 }

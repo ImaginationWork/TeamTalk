@@ -99,13 +99,9 @@ public class ImageRenderView extends BaseMsgRenderView {
                 btnImageListener.onMsgFailure();
             }
         });
-        if(FileUtil.isFileExist(((ImageMessage)entity).getPath()))
-        {
-            messageImage.setImageUrl("file://"+((ImageMessage)entity).getPath());
-        }
-        else{
-            messageImage.setImageUrl(((ImageMessage)entity).getUrl());
-        }
+
+        messageImage.setImageLocalUrl(((ImageMessage)entity).getPath());
+
         imageProgress.hideProgress();
     }
 
@@ -132,7 +128,7 @@ public class ImageRenderView extends BaseMsgRenderView {
                 messageImage.setImageLoaddingCallback(new BubbleImageView.ImageLoaddingCallback() {
                     @Override
                     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-//                        imageProgress.hideProgress();
+                        imageProgress.hideProgress();
                     }
 
                     @Override
@@ -150,7 +146,7 @@ public class ImageRenderView extends BaseMsgRenderView {
                         imageProgress.hideProgress();
                     }
                 });
-                messageImage.setImageUrl("file://"+((ImageMessage)entity).getPath());
+                messageImage.setImageLocalUrl(((ImageMessage)entity).getPath());
             }
             else
             {
@@ -172,13 +168,13 @@ public class ImageRenderView extends BaseMsgRenderView {
         super.msgSuccess(entity);
         ImageMessage imageMessage = (ImageMessage)entity;
         final String imagePath = imageMessage.getPath();
-        final String url = imageMessage.getUrl();
+//        final String url = imageMessage.getUrl();
         int loadStatus = imageMessage.getLoadStatus();
-        if(TextUtils.isEmpty(url)){
-            /**消息状态异常*/
-            msgStatusError(entity);
-            return;
-        }
+//        if(TextUtils.isEmpty(url)){
+//            /**消息状态异常*/
+//            msgStatusError(entity);
+//            return;
+//        }
 
         switch (loadStatus) {
             case MessageConstant.IMAGE_UNLOAD:{
@@ -209,20 +205,8 @@ public class ImageRenderView extends BaseMsgRenderView {
                     }
                 });
 
-                if(isMine())
-                {
-                    if(FileUtil.isFileExist(imagePath))
-                    {
-                        messageImage.setImageUrl("file://"+imagePath);
-                    }
-                    else
-                    {
-                        messageImage.setImageUrl(url);
-                    }
-                }
-                else {
-                    messageImage.setImageUrl(url);
-                }
+                messageImage.setImageLocalUrl(imagePath);
+
             }break;
 
             case MessageConstant.IMAGE_LOADING:{
@@ -252,20 +236,9 @@ public class ImageRenderView extends BaseMsgRenderView {
                     }
                 });
 
-                if(isMine())
-                {
-                    if(FileUtil.isFileExist(imagePath))
-                    {
-                        messageImage.setImageUrl("file://"+imagePath);
-                    }
-                    else
-                    {
-                        messageImage.setImageUrl(url);
-                    }
-                }
-                else {
-                    messageImage.setImageUrl(url);
-                }
+
+                messageImage.setImageLocalUrl(imagePath);
+
                 messageImage.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -306,7 +279,7 @@ public class ImageRenderView extends BaseMsgRenderView {
                 messageImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        messageImage.setImageUrl(url);
+                        //messageImage.setImageUrl(url);
                     }
                 });
             }break;

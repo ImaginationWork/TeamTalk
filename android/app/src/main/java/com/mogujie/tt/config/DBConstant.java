@@ -13,12 +13,6 @@ public interface DBConstant {
     public final int SEX_MAILE = 1;
     public final int SEX_FEMALE = 2;
 
-    /**msgType*/
-    public final int  MSG_TYPE_SINGLE_TEXT = 0x01;
-    public final int  MSG_TYPE_SINGLE_AUDIO = 0x02;
-    public final int  MSG_TYPE_GROUP_TEXT = 0x11;
-    public final int  MSG_TYPE_GROUP_AUDIO = 0x12;
-
     /**msgDisplayType
      * 保存在DB中，与服务端一致，图文混排也是一条
      * 1. 最基础的文本信息
@@ -44,14 +38,7 @@ public interface DBConstant {
     public final int  SESSION_TYPE_GROUP = 2;
     public final int SESSION_TYPE_ERROR= 3;
 
-    /**user status
-     * 1. 试用期 2. 正式 3. 离职 4.实习
-     * */
-    public final int  USER_STATUS_PROBATION = 1;
-    public final int  USER_STATUS_OFFICIAL = 2;
-    public final int  USER_STATUS_LEAVE = 3;
-    public final int  USER_STATUS_INTERNSHIP =4;
-
+    
    /**group type*/
    public final int  GROUP_TYPE_NORMAL = 1;
    public final int  GROUP_TYPE_TEMP = 2;

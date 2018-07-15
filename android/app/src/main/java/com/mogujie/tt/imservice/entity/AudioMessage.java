@@ -7,6 +7,7 @@ import com.mogujie.tt.DB.entity.UserEntity;
 import com.mogujie.tt.config.DBConstant;
 import com.mogujie.tt.DB.entity.MessageEntity;
 import com.mogujie.tt.config.MessageConstant;
+import com.mogujie.tt.protobuf.IMBaseDefine;
 import com.mogujie.tt.utils.CommonUtil;
 import com.mogujie.tt.utils.FileUtil;
 import com.mogujie.tt.imservice.support.SequenceNumberMaker;
@@ -82,8 +83,8 @@ public class AudioMessage extends MessageEntity implements Serializable{
         audioMessage.setCreated(nowTime);
         audioMessage.setUpdated(nowTime);
         int peerType = peerEntity.getType();
-        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? DBConstant.MSG_TYPE_GROUP_AUDIO :
-                DBConstant.MSG_TYPE_SINGLE_AUDIO;
+        int msgType = peerType == DBConstant.SESSION_TYPE_GROUP ? IMBaseDefine.MsgType.MSG_TYPE_GROUP_AUDIO_VALUE :
+                IMBaseDefine.MsgType.MSG_TYPE_SINGLE_AUDIO_VALUE;
         audioMessage.setMsgType(msgType);
 
         audioMessage.setAudioPath(audioSavePath);

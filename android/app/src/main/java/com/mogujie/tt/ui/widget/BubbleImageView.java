@@ -68,6 +68,7 @@ public class BubbleImageView extends ImageView {
         this.imageLoaddingCallback = callback;
     }
 
+
     public void setImageUrl(final String url) {
         this.imageUrl = url;
         if (isAttachedOnWindow) {
@@ -121,6 +122,10 @@ public class BubbleImageView extends ImageView {
         } else {
             this.setImageResource(R.drawable.tt_message_image_default);
         }
+    }
+
+    public void setImageLocalUrl(final String imagePath) {
+        setImageUrl("file://"+imagePath);
     }
 
     @Override

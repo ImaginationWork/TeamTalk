@@ -48,7 +48,7 @@ public class GifImageRenderView extends  BaseMsgRenderView {
     public void render(MessageEntity messageEntity, UserEntity userEntity,Context context) {
         super.render(messageEntity, userEntity,context);
         ImageMessage imageMessage = (ImageMessage) messageEntity;
-        String url = imageMessage.getUrl();
+        String url = imageMessage.getPath();
         new GifLoadTask() {
             @Override
             protected void onPostExecute(byte[] bytes) {

@@ -9,7 +9,9 @@ import com.mogujie.tt.DB.entity.SessionEntity;
 import com.mogujie.tt.DB.entity.UserEntity;
 import com.mogujie.tt.config.MessageConstant;
 import com.mogujie.tt.imservice.entity.AudioMessage;
+import com.mogujie.tt.imservice.entity.ImageMessage;
 import com.mogujie.tt.imservice.entity.MsgAnalyzeEngine;
+import com.mogujie.tt.imservice.entity.TextMessage;
 import com.mogujie.tt.imservice.entity.UnreadEntity;
 import com.mogujie.tt.protobuf.IMBaseDefine;
 import com.mogujie.tt.protobuf.IMGroup;
@@ -84,11 +86,7 @@ public class ProtoBuf2JavaBean {
 
         String content  = sessionInfo.getLatestMsgData().toStringUtf8();
         String desMessage = new String(com.mogujie.tt.Security.getInstance().DecryptMsg(content));
-        // 判断具体的类型是什么
-        if(msgType == DBConstant.MSG_TYPE_GROUP_TEXT ||
-                msgType ==DBConstant.MSG_TYPE_SINGLE_TEXT){
-            desMessage =  MsgAnalyzeEngine.analyzeMessageDisplay(desMessage);
-        }
+
 
         sessionEntity.setLatestMsgData(desMessage);
         sessionEntity.setUpdated(sessionInfo.getUpdatedTime());
@@ -164,19 +162,18 @@ public class ProtoBuf2JavaBean {
                     return null;
                 }
                 break;
-
+            case MSG_TYPE_SINGLE_IMAGE:
+            case MSG_TYPE_GROUP_IMAGE:
+                messageEntity = ImageMessage.parseFromNet(msgInfo);
+                break;
             case MSG_TYPE_GROUP_TEXT:
             case MSG_TYPE_SINGLE_TEXT:
-                messageEntity = analyzeText(msgInfo);
+                messageEntity = TextMessage.parseFromNet(msgInfo);
                 break;
             default:
                 throw new RuntimeException("ProtoBuf2JavaBean#getMessageEntity wrong type!");
         }
         return messageEntity;
-    }
-
-    public static MessageEntity analyzeText(IMBaseDefine.MsgInfo msgInfo){
-       return MsgAnalyzeEngine.analyzeMessage(msgInfo);
     }
 
 
@@ -246,9 +243,13 @@ public class ProtoBuf2JavaBean {
                     e.printStackTrace();
                 }
                 break;
+            case MSG_TYPE_SINGLE_IMAGE:
+            case MSG_TYPE_GROUP_IMAGE:
+                messageEntity = ImageMessage.parseFromNet(msgInfo);
+                break;
             case MSG_TYPE_GROUP_TEXT:
             case MSG_TYPE_SINGLE_TEXT:
-                messageEntity = analyzeText(msgInfo);
+                messageEntity = TextMessage.parseFromNet(msgInfo);
                 break;
             default:
                 throw new RuntimeException("ProtoBuf2JavaBean#getMessageEntity wrong type!");
@@ -280,13 +281,13 @@ public class ProtoBuf2JavaBean {
     public static int getJavaMsgType(IMBaseDefine.MsgType msgType){
         switch (msgType){
             case MSG_TYPE_GROUP_TEXT:
-                return DBConstant.MSG_TYPE_GROUP_TEXT;
+                return IMBaseDefine.MsgType.MSG_TYPE_GROUP_TEXT_VALUE;
             case MSG_TYPE_GROUP_AUDIO:
-                return DBConstant.MSG_TYPE_GROUP_AUDIO;
+                return IMBaseDefine.MsgType.MSG_TYPE_GROUP_AUDIO_VALUE;
             case MSG_TYPE_SINGLE_AUDIO:
-                return DBConstant.MSG_TYPE_SINGLE_AUDIO;
+                return IMBaseDefine.MsgType.MSG_TYPE_SINGLE_AUDIO_VALUE;
             case MSG_TYPE_SINGLE_TEXT:
-                return DBConstant.MSG_TYPE_SINGLE_TEXT;
+                return IMBaseDefine.MsgType.MSG_TYPE_SINGLE_TEXT_VALUE;
             default:
                 throw new IllegalArgumentException("msgType is illegal,cause by #getProtoMsgType#" +msgType);
         }
