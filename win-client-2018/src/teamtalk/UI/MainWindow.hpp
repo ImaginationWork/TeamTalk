@@ -130,7 +130,6 @@ public:
 
 private:
     CButtonUI*				m_pbtnMyFace;
-    CButtonUI*				m_pbtnClose;
     CTextUI*				m_pTextUnreadMsgCount;//总的未读计数
 
 

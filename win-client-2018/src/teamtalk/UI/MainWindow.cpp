@@ -65,7 +65,6 @@ MainWindow::MainWindow()
 : m_pbtnMyFace(nullptr)
 , m_bInstalled(false)
 , m_bHidden(false)
-, m_pbtnClose(nullptr)
 {
 }
 
@@ -215,7 +214,6 @@ void MainWindow::OnWindowInitialized(TNotifyUI& msg)
     module::getSessionModule()->addObserver(this, BIND_CALLBACK_2(MainWindow::MKOForSessionModuleCallBack));
 
     m_pbtnMyFace = (CButtonUI*)m_PaintManager.FindControl(_T("myfacebtn"));
-    m_pbtnClose = (CButtonUI*)m_PaintManager.FindControl(_T("closebtn"));
     m_pTextUnreadMsgCount = static_cast<CTextUI*>(m_PaintManager.FindControl(_T("msgCount")));
     PTR_VOID(m_pTextUnreadMsgCount);
 
@@ -388,12 +386,18 @@ LRESULT MainWindow::HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam,
 {
     if (uMsg == WM_START_MOGUTALKINSTANCE) {
         BringToTop();
+        bHandled = true;
     }
     else if (uMsg == WM_KEYDOWN)
     {
         if (VK_ESCAPE == wParam) {
             ShowWindow(false);
+            bHandled = true;
         }
+    }
+    else if (uMsg == WM_CLOSE) {
+        ShowWindow(false);
+        bHandled = true;
     }
     return 0;
 }
@@ -746,10 +750,10 @@ void MainWindow::OnClick(TNotifyUI& msg)
         //show the detail of myself.
         module::getSysConfigModule()->asynNotifyObserver(module::KEY_SYSCONFIG_SHOW_USERDETAILDIALOG, module::getSysConfigModule()->userID());
     }
-    else if (msg.pSender == m_pbtnClose) {
-        ShowWindow(false);
-        return;
-    }
+    /*   else if (msg.pSender == m_pbtnClose) {
+           ShowWindow(false);
+           return;
+       }*/
 
     __super::OnClick(msg);
 }
