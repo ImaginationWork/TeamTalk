@@ -78,6 +78,17 @@ MainWindow::~MainWindow()
     module::getUserListModule()->removeObserver(this);
     module::getSessionModule()->removeObserver(this);
     RemoveIcon();
+
+    {
+        if (m_hRegisterHotkeyWnd && m_iHotkeyId)
+        {
+            UnregisterHotKey(m_hRegisterHotkeyWnd, m_iHotkeyId);
+            GlobalDeleteAtom(m_iHotkeyId);
+        }
+
+        m_hRegisterHotkeyWnd = nullptr;
+        m_iHotkeyId = 0;
+    }
 }
 
 LPCTSTR MainWindow::GetWindowClassName() const
@@ -127,6 +138,15 @@ void MainWindow::OnHotkey(__in WPARAM wParam, __in LPARAM lParam)
     else if (module::SC_HK_ESCAPE == emHotkeyId)
     {
         module::getScreenCaptureModule()->cancelCapture();
+    }
+    else {
+        // not ScreenCaptureHotkey
+
+        if (0x51 == HIWORD(lParam) && (MOD_CONTROL | MOD_ALT) == LOWORD(lParam))
+        {
+            //ctrl + alt + A
+            ToggleWindowVisibility();
+        }
     }
 }
 
@@ -345,6 +365,22 @@ void MainWindow::InitWindow()
     CenterWindow();
 #endif
 
+
+
+
+    //register hot key
+    {
+        const std::wstring screenCaptureHotkeyName = L"_TT_OPEN_MAINWINDOW_HOTKEY";
+        int iHotkeyId = (int)GlobalAddAtom(screenCaptureHotkeyName.c_str());
+
+        if (!RegisterHotKey(m_hWnd, iHotkeyId, MOD_CONTROL | MOD_ALT, 0x51)) //ctrl + shift + Q
+        {
+            GlobalDeleteAtom(iHotkeyId);
+        }
+
+        m_iHotkeyId = iHotkeyId;
+        m_hRegisterHotkeyWnd = m_hWnd;
+    }
 
 }
 
@@ -897,4 +933,14 @@ void MainWindow::StopNewMsgTrayEmot()
 {
     KillTimer(m_hWnd, TIMER_TRAYEMOT);
     UpdateLineStatus(module::getUserListModule()->getMyLineStatus());
+}
+
+void MainWindow::ToggleWindowVisibility()
+{
+    auto goto_visible = !IsWindowVisible(m_hWnd);
+    ShowWindow(goto_visible);
+    if (goto_visible) {
+        //BringWindowToTop(m_hWnd);
+        BringToTop();
+    }
 }

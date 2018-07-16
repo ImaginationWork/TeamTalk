@@ -88,6 +88,7 @@ private:
     void OnHotkey(__in WPARAM wParam, __in LPARAM lParam);
 
     void CenterWindow();
+    void ToggleWindowVisibility();
     /**@name MKO*/
     //@{
 public:
@@ -138,5 +139,11 @@ private:
     BOOL					m_bInstalled;
     BOOL					m_bHidden;
     DWORD					m_dwShellVersion;
+
+
+
+    // 全局热键打开窗口
+    HWND m_hRegisterHotkeyWnd = nullptr; 
+    int m_iHotkeyId = 0;
 
 };
