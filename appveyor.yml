@@ -1,0 +1,22 @@
+version: 1.0.{build}
+configuration: Release
+before_build:
+- cmd: >-
+    cd .\win-client-2018\include\ProtocolBuffer\
+
+    call gen_files_cpp.bat
+build:
+  project: .\win-client-2018\solution\teamtalk.sln
+  parallel: true
+  verbosity: quiet
+artifacts:
+- path: .\win-client-2018\bin\teamtalk\Release\teamtalk.exe
+- path: .\win-client-2018\bin\teamtalk\Release\DuiLib.dll
+- path: .\win-client-2018\bin\teamtalk\Release\GifSmiley.dll
+- path: .\win-client-2018\bin\teamtalk\Release\libogg.dll
+- path: .\win-client-2018\bin\teamtalk\Release\Modules.dll
+- path: .\win-client-2018\bin\teamtalk\Release\network.dll
+- path: .\win-client-2018\bin\teamtalk\Release\speexdec.exe
+- path: .\win-client-2018\bin\teamtalk\Release\sqlite3.dll
+- path: .\win-client-2018\bin\teamtalk\Release\ttlogconfig.ini
+- path: .\win-client-2018\bin\teamtalk\Release\utility.dll
