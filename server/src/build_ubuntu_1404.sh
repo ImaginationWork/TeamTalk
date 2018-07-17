@@ -198,7 +198,7 @@ build() {
 
     cp slog/log4cxx.properties ../$build_version/lib/
     cp slog/libslog.so  ../$build_version/lib/
-    cp -a /usr/lib/x86_64-linux-gnu/liblog4cxx.so* ../$build_version/lib/
+    cp -a /usr/lib/liblog4cxx.so* ../$build_version/lib/
     cp sync_lib_for_zip_ubuntu.sh ../$build_version/
 
     cp tools/daeml ../$build_version/
