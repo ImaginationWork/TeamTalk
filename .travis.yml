@@ -2,12 +2,11 @@ language: android
 before_install:
   #- sudo apt-get install -y protobuf-compiler
   - echo $TRAVIS_BUILD_DIR
-  - cd ./server/src 
+  - cd $TRAVIS_BUILD_DIR/server/src 
   - sudo chmod +x make_protobuf.sh
   - sudo ./make_protobuf.sh 
-  - cd $TRAVIS_BUILD_DIR/android/app/src/main/java
-  - ../../../../../server/src/protobuf/bin/protoc -I../../../../../pb/ --java_out=./ ../../../../../pb/*.proto
-  - cd $TRAVIS_BUILD_DIR
+  - $TRAVIS_BUILD_DIR/server/src/protobuf/bin/protoc -I$TRAVIS_BUILD_DIR/pb/ --java_out=$TRAVIS_BUILD_DIR/android/app/src/main/java $TRAVIS_BUILD_DIR/pb/*.proto
+  - cd $TRAVIS_BUILD_DIR/android/
   - echo y | sdkmanager "build-tools;25.0.0"
   - echo y | sdkmanager "platforms;android-19"
   #- echo y | sdkmanager "ndk-bundle"
