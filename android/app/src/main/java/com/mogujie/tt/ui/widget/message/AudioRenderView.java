@@ -25,6 +25,7 @@ import java.io.File;
  * @author : yingmu on 15-1-9.
  * @email : yingmu@mogujie.com.
  */
+@SuppressWarnings("ResourceType")
 public class AudioRenderView extends  BaseMsgRenderView {
 
     /**可点击的消息体*/
