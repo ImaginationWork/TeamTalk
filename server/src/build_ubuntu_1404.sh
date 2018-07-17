@@ -13,6 +13,7 @@ apt_get() {
     apt-get -y install libcurl4-openssl-dev
     apt-get -y install liblog4cxx10-dev
     apt-get -y install libmysqlclient-dev
+    apt-get -y install libhiredis-dev
 }
 
 build() {    
