@@ -3,8 +3,7 @@ before_install:
   #- sudo apt-get install -y protobuf-compiler
   - echo $TRAVIS_BUILD_DIR
   - cd $TRAVIS_BUILD_DIR/server/src 
-  - sudo chmod +x make_protobuf.sh
-  - sudo ./make_protobuf.sh 
+  - sudo ./build_ubuntu_1604.sh # build server and generate executable file protoc
   - $TRAVIS_BUILD_DIR/server/src/protobuf/bin/protoc -I$TRAVIS_BUILD_DIR/pb/ --java_out=$TRAVIS_BUILD_DIR/android/app/src/main/java $TRAVIS_BUILD_DIR/pb/*.proto
   - cd $TRAVIS_BUILD_DIR/android/
   - echo y | sdkmanager "build-tools;25.0.0"
