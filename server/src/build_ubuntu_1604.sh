@@ -1,18 +1,21 @@
 #!/bin/bash
 
-build() {
-    # yum -y install cmake
-    # yum -y install libuuid-devel
-    # yum -y install openssl-devel
-    # yum -y install curl-devel
+make_pb() {
+    echo "do make_protobuf.sh ..."
+    ./make_protobuf.sh
+}
 
+apt_get() {
+    echo "apt-get something..."
     apt-get -y install cmake
     apt-get -y install uuid-dev
     apt-get -y install libssl-dev
     apt-get -y install libcurl4-openssl-dev
     apt-get -y install liblog4cxx-dev
     apt-get -y install libmysqlclient-dev
+}
 
+build() {    
     echo "#ifndef __VERSION_H__" > base/version.h
     echo "#define __VERSION_H__" >> base/version.h
     echo "#define VERSION \"$1\"" >> base/version.h
@@ -214,7 +217,10 @@ case $1 in
             print_help
             exit
         fi
-
+        
+        apt_get
+        make_pb
+        
         echo $2
         echo "build..."
         build $2
