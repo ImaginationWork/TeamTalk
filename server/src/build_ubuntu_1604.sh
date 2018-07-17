@@ -214,7 +214,6 @@ case $1 in
     version)
         if [ $# != 2 ]; then 
             echo $#
-            print_help
             exit
         fi
         
@@ -226,6 +225,5 @@ case $1 in
         build $2
         ;;
     *)
-        print_help
         ;;
 esac
