@@ -34,6 +34,14 @@ public class TextMessage extends MessageEntity implements Serializable {
          status = entity.getStatus();
          created = entity.getCreated();
          updated = entity.getUpdated();
+         transformText();
+     }
+
+     private void transformText(){
+         content = content.replace("\r\n", "\n");
+         if (content.endsWith("\n")){
+             content = content.trim();
+         }
      }
 
     public static MessageEntity parseFromNet(IMBaseDefine.MsgInfo msgInfo) {
