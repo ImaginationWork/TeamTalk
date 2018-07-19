@@ -39,7 +39,5 @@ Source: "gui\*"; DestDir: "{app}\gui\"; Flags: recursesubdirs
 [Icons]
 Name: "{group}\..\{#AppName}"; Filename: "{app}\bin\TeamTalk.exe"
 
-#ifdef Debug
-  #expr SaveToFile(AddBackslash(SourcePath) + "Preprocessed.iss"), \
-        Exec(AddBackslash(CompilerPath) + "Compil32.exe", """" + AddBackslash(SourcePath) + "Preprocessed.iss""")
-#endif
+[Run]
+Filename: "regsvr32.exe"; WorkingDir: "{app}\bin\"; Parameters: "/s GifSmiley.dll"
