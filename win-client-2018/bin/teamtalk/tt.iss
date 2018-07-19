@@ -26,7 +26,7 @@ DefaultGroupName={#AppName}
 UninstallDisplayIcon={app}\TeamTalk.exe
 ;LicenseFile={#file AddBackslash(SourcePath) + "ISPPExample1License.txt"}
 VersionInfoVersion={#AppVersion}
-OutputDir=userdocs:Inno Setup Examples Output
+OutputDir={app}\..\..\..\
 
 [Files]         
 Source: "Release\*.exe"; DestDir: "{app}\bin\"
