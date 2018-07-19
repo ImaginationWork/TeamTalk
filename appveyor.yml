@@ -10,7 +10,7 @@ build:
   parallel: true
   verbosity: quiet
 after_build:
-- cmd: '"C:\Program Files (x86)\Inno Setup 5\ISCC.exe"  .\win-client-2018\bin\teamtalk\tt.iss'
+- cmd: '"C:\Program Files (x86)\Inno Setup 5\ISCC.exe"  %APPVEYOR_BUILD_FOLDER%\win-client-2018\bin\teamtalk\tt.iss'
 artifacts:
 - path: .\win-client-2018\mysetup.exe
   name: tt.exe
