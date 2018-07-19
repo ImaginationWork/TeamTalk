@@ -3,6 +3,7 @@ configuration: Release
 before_build:
 - cmd: >-
     cd .\win-client-2018\include\ProtocolBuffer\
+    
     call gen_files_cpp.bat
 build:
   project: .\win-client-2018\solution\teamtalk.sln
