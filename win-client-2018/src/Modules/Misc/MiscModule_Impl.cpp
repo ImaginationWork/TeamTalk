@@ -303,6 +303,18 @@ void MiscModule_Impl::doProcess2(IN std::string& pData, OUT std::string& pOutDat
 		//if failed, copy the source msg data
 		pOutData = pData;
 	}
+
+    // parse \n ---> \r\n
+    {
+        auto &content = pOutData;
+        for (size_t i = 1; i < content.length(); i++) {
+            if (content[i] == '\n') {
+                if (content[i - 1] != '\r') {
+                    content.insert(content.begin() + i, '\r');
+                }
+            }
+        }
+    }
 }
 
 void MiscModule_Impl::doProcess2(IN std::vector<char>& pData, OUT std::vector<char>& pOutData) {
