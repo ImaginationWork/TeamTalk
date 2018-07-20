@@ -74,26 +74,6 @@ void EmotionDialog::Notify(TNotifyUI& msg)
 		int n = 1; 
 		n++;
 	}
-	else if (0 == _tcsicmp(msg.sType, DUI_MSGTYPE_CLICK))
-	{
-		if (_tcsicmp(msg.pSender->GetName(), _T("prev_page")) == 0)  //上一页
-		{
-			CEmotionButton *pEmotionButton = static_cast<CEmotionButton*>(m_PaintManager.FindControl(_T("emotion_button")));
-			if (pEmotionButton != NULL && pEmotionButton->GetCurrentPage() > 0)
-			{
-				pEmotionButton->SetPage(pEmotionButton->GetCurrentPage() - 1);
-			}
-		}
-		else if (_tcsicmp(msg.pSender->GetName(), _T("next_page")) == 0)  //下一页
-		{
-			CEmotionButton *pEmotionButton = static_cast<CEmotionButton*>(m_PaintManager.FindControl(_T("emotion_button")));
-
-			if (pEmotionButton != NULL && pEmotionButton->GetCurrentPage() < (pEmotionButton->GetPageCount() - 1))
-			{
-				pEmotionButton->SetPage(pEmotionButton->GetCurrentPage() + 1);
-			}
-		}
-	}
 	else
 		__super::Notify(msg);
 }

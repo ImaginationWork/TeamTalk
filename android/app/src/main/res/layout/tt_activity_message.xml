@@ -207,6 +207,7 @@
                     android:background="@drawable/tab_bg_selector"/>
 
                 <RadioButton
+                    android:visibility="gone"
                     android:id="@+id/tab2"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
