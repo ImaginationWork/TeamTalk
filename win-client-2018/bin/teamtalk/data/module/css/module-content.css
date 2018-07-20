@@ -4,7 +4,7 @@ html, body, ul, li, p {
 }
 body, html {
     height: 100%;
-    font: normal 12px/1.5 'SimSun';
+    font: normal 12px/1.5 'segoe ui emoji';
     overflow: hidden;
 }
 img {
