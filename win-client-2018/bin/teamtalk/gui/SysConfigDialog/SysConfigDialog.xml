@@ -27,7 +27,7 @@
 			<Text  text="声音设置"  padding="0,0,0,0" textcolor="#FF999999" font="1" />
 			<CheckBox name="soundBtn" padding="10,15,0,0"  height="16" width="80" text="开启消息声音" />
 			<HorizontalLayout padding="10,10,0,0" height="22">
-					<Option text="叮咚声" name="DingdongRdo"width="55" selected="true" group="RadioBoxGroup" />
+					<Option text="叮咚声" name="DingdongRdo" width="55" selected="true" group="RadioBoxGroup" />
 					<Option text="呼叫声" name="HujiaoRdo" padding="30,0,0,0" width="55" group="RadioBoxGroup" />
 					<Option text="键盘声" name="JianpanRdo" padding="30,0,0,0" width="55" group="RadioBoxGroup" />
 					<Option text="叮铃声" name="DinglinRdo" padding="30,0,0,0" width="55" group="RadioBoxGroup" />

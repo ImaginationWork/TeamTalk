@@ -8,7 +8,6 @@
 #include "CreateDiscussionGrpDialog.h"
 #include "Modules/ITcpClientModule.h"
 #include "Modules/IUserListModule.h"
-#include "Modules/UI/SearchLayout.h"
 #include "Modules/ISysConfigModule.h"
 #include "Modules/UI/UIIMList.h"
 #include "utility/Multilingual.h"

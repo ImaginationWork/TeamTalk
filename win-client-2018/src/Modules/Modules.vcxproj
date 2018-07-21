@@ -567,7 +567,6 @@
     <ClCompile Include="Session\SessionModule_Impl.cpp" />
     <ClCompile Include="Session\UI\MainListLayout.cpp" />
     <ClCompile Include="Session\UI\MainListLayout_Event.cpp" />
-    <ClCompile Include="Session\UI\SearchLayout.cpp" />
     <ClCompile Include="Session\UI\SessionLayout.cpp" />
     <ClCompile Include="Session\UI\SessionLayout_Event.cpp" />
     <ClCompile Include="Session\UI\SessionLayout_Function.cpp" />
@@ -650,7 +649,6 @@
     <ClInclude Include="..\..\include\Modules\ModuleObserver.h" />
     <ClInclude Include="..\..\include\Modules\ModuleSubject.h" />
     <ClInclude Include="..\..\include\Modules\UI\MainListLayout.h" />
-    <ClInclude Include="..\..\include\Modules\UI\SearchLayout.h" />
     <ClInclude Include="..\..\include\Modules\UI\SessionLayout.h" />
     <ClInclude Include="..\..\include\Modules\UI\UIEAUserTreelist.h" />
     <ClInclude Include="..\..\include\Modules\UI\UIGroupsTreelist.h" />

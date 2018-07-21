@@ -17,7 +17,6 @@
 #include "Modules/IMessageModule.h"
 #include "Modules/IGroupListModule.h"
 #include "Modules/ISysConfigModule.h"
-#include "Modules/UI//SearchLayout.h"
 #include "Modules/MessageEntity.h"
 #include "../Message/SendMsgManage.h"
 #include "../Message/ReceiveMsgManage.h"
@@ -96,10 +95,6 @@ DuiLib::CControlUI* SessionModule_Impl::createMainDialogControl(
 	if (_tcsicmp(pstrClass, _T("ListLayout")) == 0)
 	{
 		return new MainListLayout();
-	}
-	if (0 == _tcsicmp(pstrClass, _T("SearchLayout")))
-	{
-		return new SearchLayout();
 	}
 	if (_tcsicmp(pstrClass, _T("FriendList")) == 0)
 	{

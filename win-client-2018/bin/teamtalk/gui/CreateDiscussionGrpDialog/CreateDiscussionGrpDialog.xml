@@ -21,7 +21,6 @@
 	</HorizontalLayout>
     <HorizontalLayout  bkcolor="#FFFFFF00"  padding="8,0,0,0">
 	      <VerticalLayout  name="SearchPanel" bkcolor="#FFFFFFFF">
-			 <Edit name="editSearch" height="27" multiline="false" bordersize="1" borderround="2,2"  bordercolor="FFDADADA" inset="4,4,4,3" tooltip="查找成员" multiline="false"/>
 			 <List header="hidden"  itemshowhtml="true" name="searchResultList" visible="false"  vscrollbar="true" childpadding="2"/>			
 			 <CreatFromList name="CreatFromList" header="hidden" itemshowhtml="true" vscrollbar="true"/>
 		  </VerticalLayout>	  

@@ -30,8 +30,6 @@
     </VerticalLayout>
     <Control width="1"/>
     <VerticalLayout name="right_part" width="160"  visible="false" bkcolor="#FFFFFFFF" >
-      <Edit name="editSearch" height="27" multiline="false" bordersize="1" borderround="2,2" bordercolor="FFDADADA" inset="4,4,4,3" tooltip="搜索群成员" multiline="false"/>
-      <List name="SearchResult" menu="true" header="hidden"  itemshowhtml="true"  visible="false" vscrollbar="true" childpadding="2"/>
       <List name="GroupMembers" menu="true" header="hidden" itemshowhtml="true" vscrollbar="true"/>
     </VerticalLayout>
   </SessionLayout>

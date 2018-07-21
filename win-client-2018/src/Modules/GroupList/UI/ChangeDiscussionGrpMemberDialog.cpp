@@ -9,7 +9,6 @@
 #include "Modules/ITcpClientModule.h"
 #include "Modules/IUserListModule.h"
 #include "Modules/IGroupListModule.h"
-#include "Modules/UI/SearchLayout.h"
 #include "Modules/ISysConfigModule.h"
 #include "Modules/UI/UIIMList.h"
 #include "ProtocolBuffer/IM.Group.pb.h"

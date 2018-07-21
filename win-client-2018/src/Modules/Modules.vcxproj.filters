@@ -186,9 +186,6 @@
     <ClCompile Include="Session\UI\MainListLayout_Event.cpp">
       <Filter>Session\UI\MainList</Filter>
     </ClCompile>
-    <ClCompile Include="Session\UI\SearchLayout.cpp">
-      <Filter>Session\UI\MainList</Filter>
-    </ClCompile>
     <ClCompile Include="Session\UI\UIEAUserTreelist.cpp">
       <Filter>Session\UI\MainList</Filter>
     </ClCompile>
@@ -741,9 +738,6 @@
       <Filter>Session\UI\SessionDialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Modules\UI\MainListLayout.h">
-      <Filter>Session\UI\MainList</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Modules\UI\SearchLayout.h">
       <Filter>Session\UI\MainList</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Modules\UI\UIEAUserTreelist.h">
