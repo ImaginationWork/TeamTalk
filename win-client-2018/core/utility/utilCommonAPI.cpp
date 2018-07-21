@@ -160,40 +160,6 @@ BOOL isFileExist(IN const LPCTSTR csFileName)
 	return TRUE;
 }
 
-BOOL registerDll(const CString& sFilePath)
-{
-	if (!PathFileExists(sFilePath))
-		return FALSE;
-
-	typedef LRESULT(*DllRegisterServerProc)(void);
-	BOOL retVal = FALSE;
-	HINSTANCE hDll = LoadLibrary(sFilePath);
-	while (TRUE)
-	{
-		if (hDll == NULL)
-			break;
-		DllRegisterServerProc DllRegisterServer;
-		DllRegisterServer = (DllRegisterServerProc)GetProcAddress(hDll, "DllRegisterServer");
-		if (DllRegisterServer == NULL)
-			break;
-
-		int temp = DllRegisterServer();
-		if (temp != S_OK)
-			break;
-
-		retVal = TRUE;
-		break;
-	}
-
-	if (retVal == FALSE)
-	{
-		LOG__(ERR, _T("register dll failed,%s"), sFilePath);
-	}
-
-	FreeLibrary(hDll);
-	return retVal;
-}
-
 BOOL waitSingleObject(HANDLE handle, Int32 timeout)
 {
 	int t = 0;

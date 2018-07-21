@@ -334,11 +334,6 @@ void MainWindow::Initilize()
     module::UserInfoEntity myInfo;
     module::getUserListModule()->getMyInfo(myInfo);
     m_pbtnMyFace->SetBkImage(util::stringToCString(myInfo.getAvatarPathWithoutOnlineState()));
-
-    CString csPath = util::getAppPath() + _T("\\GifSmiley.dll");
-    util::registerDll(csPath);
-
-
 }
 
 void MainWindow::InitWindow()

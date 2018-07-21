@@ -31,7 +31,6 @@ UTILITY_API BOOL		isFileExist(IN const LPCTSTR csFileName);
 UTILITY_API UInt32		hash_BKDR(const char* str);
 UTILITY_API void		messagePump();
 UTILITY_API CString		getMd5CString(const char* pSrc, size_t length);
-UTILITY_API BOOL		registerDll(const CString& sFilePath);
 UTILITY_API BOOL		waitSingleObject(HANDLE handle,Int32 timeout);
 
 NAMESPACE_END(util)
