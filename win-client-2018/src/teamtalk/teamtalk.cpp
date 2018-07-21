@@ -218,4 +218,8 @@ void CteamtalkApp::_InitLog()
 	YAOLOG_SET_ATTR_FROM_CONFIG_FILE(DEBG, logConfig.c_str());
 	YAOLOG_SET_ATTR_FROM_CONFIG_FILE(ERR, logConfig.c_str());
 	YAOLOG_SET_ATTR_FROM_CONFIG_FILE(SOCK, logConfig.c_str());
+
+    for (auto id : { APP, NET, DEBG, ERR, SOCK }) {
+        YaoUtil::LogFactory::SetLogFileAttr(id, false, false, false, util::cStringToString(module::getMiscModule()->getTTCommonAppdata()).c_str(), "tt.log");
+    }
 }
