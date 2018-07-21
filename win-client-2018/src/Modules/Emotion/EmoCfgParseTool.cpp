@@ -53,8 +53,7 @@ void EmoCfgParseTool::loadCfgFile(IN LPCTSTR strFilePath)
 	//读取配置文件到内存
 	std::string strData;
 	CFile f;
-	f.Open(strFilePath,
-		CFile::modeReadWrite);
+	f.Open(strFilePath, CFile::modeRead);
 	char* buf = new char[MAX_PATH];
 	ZeroMemory(buf, MAX_PATH);
 	while (f.Read(buf, MAX_PATH))
