@@ -27,7 +27,6 @@ public:
 	virtual CString getDataDir() = 0;
 	virtual CString getDefaultAvatar() = 0;
 	virtual CString getUserTempDir() = 0;
-	virtual CString getDumpDir() = 0;
     virtual CString getTTCommonAppdataUserDir() = 0;//在系统公共目录下
     virtual CString GetAudioFileSavedPath() = 0;
     virtual CString getImageFileSavedPath() = 0;

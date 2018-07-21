@@ -43,7 +43,6 @@ public:
 	virtual CString getDataDir();
 	virtual CString getDefaultAvatar();
 	virtual CString getUserTempDir();
-	virtual CString getDumpDir();
 	virtual CString getFileRecvDir();//文件传输保存的路径
 	virtual CString getTTCommonAppdataUserDir();//在系统公共目录下
     virtual CString GetAudioFileSavedPath();	//语音文件保存目录

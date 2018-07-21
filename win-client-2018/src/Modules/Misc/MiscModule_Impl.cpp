@@ -50,9 +50,10 @@ CString MiscModule_Impl::getImageFileSavedPath()
     return getTTCommonAppdataUserDir() + _T("Image\\");
 }
 
+// TODO
 CString MiscModule_Impl::getUsersDir()
 {
-	return util::getParentAppPath() + _T("users\\");
+	return getTTCommonAppdataUserDir() + _T("users\\");
 }
 
 CString MiscModule_Impl::getCurAccountDir()
@@ -76,11 +77,6 @@ CString MiscModule_Impl::getDataDir()
 CString MiscModule_Impl::getUserTempDir()
 {
 	return getCurAccountDir() + _T("Temp\\");
-}
-
-CString MiscModule_Impl::getDumpDir()
-{
-	return util::getAppPath() + _T("dumps\\");
 }
 
 CString MiscModule_Impl::getFileRecvDir()

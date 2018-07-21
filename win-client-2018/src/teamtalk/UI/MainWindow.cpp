@@ -820,20 +820,6 @@ void MainWindow::OnMenuClicked(IN const CString& itemName, IN const CString& str
     {
         module::getMiscModule()->quitTheApplication();
     }
-    else if (_T("LogDir") == itemName)//打开日志目录
-    {
-        CString strLogDir = util::getParentAppPath() + _T("bin\\log\\ttlog.log");
-        if (PathFileExists(strLogDir))
-        {
-            HINSTANCE hr = ShellExecute(NULL, _T("open"), _T("Explorer.exe"), _T("/select,") + strLogDir, NULL, SW_SHOWDEFAULT);
-            if ((long)hr < 32)
-            {
-                DWORD dwLastError = ::GetLastError();
-                LOG__(ERR, _T("ShellExecute Failed GetLastError = %d")
-                    , dwLastError);
-            }
-        }
-    }
     else if (_T("OnlineMenuItem") == itemName)
     {
         if (IM::BaseDefine::USER_STATUS_ONLINE == module::getUserListModule()->getMyLineStatus())

@@ -53,7 +53,7 @@ SysConfigModule_Impl::~SysConfigModule_Impl()
 
 BOOL SysConfigModule_Impl::_loadData()
 {
-	CString fileName = util::getAppPath() + g_config;
+	CString fileName = module::getMiscModule()->getTTCommonAppdata() + g_config;
 	if (!PathFileExists(fileName))
 	{
 		LOG__(ERR,_T("_loadData system config file is not exist"));
@@ -89,7 +89,7 @@ BOOL SysConfigModule_Impl::_loadData()
 
 BOOL SysConfigModule_Impl::_saveData()
 {
-	CString fileName = util::getAppPath() + g_config;
+	CString fileName = module::getMiscModule()->getTTCommonAppdata() + g_config;
 
 	CFile file;
 	try
