@@ -7,6 +7,7 @@ make_pb() {
 
 apt_get() {
     echo "apt-get something..."
+    apt-get -y install g++
     apt-get -y install cmake
     apt-get -y install uuid-dev
     apt-get -y install libssl-dev
